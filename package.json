@@ -1,0 +1,24 @@
+{
+  "name": "nodeping_node",
+  "version": "1.0.0",
+  "description": "Sync client for NodePing data ingress",
+  "main": "sync-client.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/NodePing/NodePing_node.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/NodePing/NodePing_node/issues"
+  },
+  "homepage": "https://github.com/NodePing/NodePing_node#readme",
+  "dependencies": {
+    "minimist": "^1.2.0",
+    "request": "^2.83.0",
+    "request-promise": "^4.2.2"
+  }
+}
