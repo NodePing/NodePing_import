@@ -17,10 +17,18 @@ if (validSourceSites.indexOf(source) === -1) {
   process.exit();
 }
 
+//selectively create required egressClient
 egressClient = require(`./clients/${source}EgressClient`);
 
 //temporary source of credentials - convert to command line later
 egressCredentials = devCredentials[source];
 
-const contactGroups = egressClient.discoverContacts(egressCredentials);
-//npClient.sync(contactGroups);
+egressClient.getContactGroups(egressCredentials)
+.then((contacts) => {
+  npClient.syncContactGroups(contacts, npCredentials);
+})
+
+egressClient.getTests(egressCredentials)
+.then((tests) => {
+  npClient.syncTests(tests, npCredentials);
+})
