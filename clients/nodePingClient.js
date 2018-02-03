@@ -6,23 +6,41 @@ const apiBaseUrl = 'https://api.nodeping.com/api/1/';
 
 module.exports = {
   syncContacts: function(contacts, credentials) {
-    Promise.map(contacts, (contact) => {
-      var options = {
-        method: 'POST',
-        uri: `${apiBaseUrl}contacts/?token=${credentials.token}`,
-        body: {
-          name: contact,
+    contactIDs = Object.keys(contacts)
+    var options = {
+      method: 'POST',
+      uri: `${apiBaseUrl}contacts/?token=${credentials.token}`,
+      json: true
+    };
+
+    Promise.map(contactIDs, (contactID) => {
+      contactGroup = contacts[contactID]
+      contactGroup.emails.forEach((email) => {
+        options.body = {
+          name: email,
           newaddresses: [{
-            address: contact,
+            address: email,
             type: 'email'
           }]
         },
-        json: true
-      };
-      return rp(options);
-    })
-    .then((results) => {
-      console.log(results);
+        rp(options)
+        .then((results) => {
+          console.log(results)
+        })
+      })
+      contactGroup.mobiles.forEach((mobile) => {
+        options.body = {
+          name: mobile,
+          newaddresses: [{
+            address: mobile,
+            type: 'mobile'
+          }]
+        },
+        rp(options)
+        .then((results) => {
+          console.log(results)
+        })
+      })
     })
   },
 
