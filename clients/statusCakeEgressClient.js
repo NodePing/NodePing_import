@@ -1,5 +1,6 @@
 const rp = require('request-promise');
 const Promise = require('bluebird');
+const _ = require('lodash');
 
 const apiBaseUrl = 'https://app.statuscake.com/API/';
 
@@ -45,5 +46,13 @@ module.exports = {
       json: true
     };
     return rp(options)
+    .then((results) => {
+      var emailMap = [];
+      results.forEach((result) => {
+        console.log(result)
+        emailMap = _.uniq(_.merge(emailMap, result.Emails))
+      })
+      return emailMap
+    })
   }
 }
