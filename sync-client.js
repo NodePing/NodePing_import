@@ -25,7 +25,7 @@ egressCredentials = devCredentials[source];
 
 egressClient.getContactGroups(egressCredentials)
 .then((contacts) => {
-  npClient.syncContactGroups(contacts, npCredentials);
+  npClient.syncContacts(contacts, npCredentials);
 })
 
 egressClient.getTests(egressCredentials)
