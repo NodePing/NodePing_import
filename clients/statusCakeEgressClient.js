@@ -16,6 +16,23 @@ const mapTestToCheck = function (test) {
   return check;
 };
 
+const mapContactsAndGroups = function (contactGroups) {
+  var contactMap = {};
+
+  contactGroups.forEach((contactGroup) => {
+    var contactID = contactGroup.ContactID
+    contactMap[contactID] = {
+      groupName: contactGroup.GroupName
+    };
+    if (contactGroup.Mobiles === '') {
+      contactMap[contactID].mobiles = []
+    } else {
+      contactMap[contactID].mobiles = contactGroup.Mobiles
+    }
+    contactMap[contactID].emails = contactGroup.Emails
+  })
+  return contactMap;
+}
 
 module.exports = {
   getTests: function(credentials) {
@@ -47,12 +64,7 @@ module.exports = {
     };
     return rp(options)
     .then((results) => {
-      var emailMap = [];
-      results.forEach((result) => {
-        console.log(result)
-        emailMap = _.uniq(_.merge(emailMap, result.Emails))
-      })
-      return emailMap
+      return mapContactsAndGroups(results);
     })
   }
 }
