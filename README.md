@@ -4,6 +4,7 @@ Node.js library for interacting with NodePing API
 Work in Progress.  When this code is deployable, it will be merged to master.
 
 To test, create `credentials.js` in top-level directory
+
 `credentials.js` should contain:
 
 ```
