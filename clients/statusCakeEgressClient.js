@@ -1,15 +1,41 @@
 const rp = require('request-promise');
+const Promise = require('bluebird');
 
 const apiBaseUrl = 'https://app.statuscake.com/API/';
 
+const mapTestToCheck = function (test) {
+  const check = {
+    type: test.TestType,
+    label: test.WebsiteName,
+    target: test.WebsiteURL,
+    enabled: !test.Paused,
+    public: test.Public,
+    interval: test.CheckRate / 60
+  };
+  return check;
+};
+
+
 module.exports = {
-  discover: function(credentials) {
-    return null;
+  getTests: function(credentials) {
+    const tests = [];
+    var options = {
+      uri: `${apiBaseUrl}Tests/`,
+      headers: {
+          'API': credentials.token,
+          'Username': credentials.user
+      },
+      json: true
+    };
+    return rp(options)
+    .then((results) => {
+      results.forEach((result) => {
+        tests.push(mapTestToCheck(result));
+      });
+      return tests
+    })
   },
-  retrieveData: function(credentials) {
-    return null;
-  },
-  discoverContacts: function(credentials) {
+  getContactGroups: function(credentials) {
     var options = {
       uri: `${apiBaseUrl}ContactGroups/`,
       headers: {
@@ -18,13 +44,6 @@ module.exports = {
       },
       json: true
     };
-    rp(options)
-    .then(function (response) {
-        console.log(response);
-    })
-    .catch(function (err) {
-        console.log(err);
-    });
+    return rp(options)
   }
-
 }
