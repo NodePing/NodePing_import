@@ -30,8 +30,23 @@ module.exports = {
     })
   },
   createContact: function(contactInfo) {
-    options.method = 'PUT'
-    options.body = contactInfo
+    payload = {
+      name: contactInfo.contactAddress,
+      type: contactInfo.contactType,
+      address: contactInfo.contactAddress,
+      newaddresses: [{
+        type: contactInfo.contactType,
+        address: contactInfo.contactAddress
+      }]
+    }
+    options.method = 'POST'
+    options.body = payload
+    return rp(options)
+  },
+  createContactGroup: function(groupInfo) {
+    options.uri = `${apiBaseUrl}contactgroups/?token=${npCredentials.token}`
+    options.method = 'POST'
+    options.body = groupInfo
     return rp(options)
   }
 }

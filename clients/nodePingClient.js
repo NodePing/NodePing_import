@@ -20,50 +20,45 @@ module.exports = {
       .then((newMap) => {
         Promise.map(newMap, (mappedContact) => {
             if (_.has(mappedContact, 'NpContact')) {
-              //console.log(mappedContact)
+              return mappedContact
             } else {
-              utils.createContact({
-                name: mappedContact.contactAddress,
-                type: mappedContact.contactType,
-                address: mappedContact.contactAddress,
-                newaddresses: {
-                  name: mappedContact.contactAddress,
-                  type: mappedContact.contactType,
-                  address: mappedContact.contactAddress
-                }
-              })
+              return utils.createContact(mappedContact)
               .then((createdContact) => {
-                mappedContact.NpContact = createdContact;
+                mappedContact.NpContact = _.cloneDeep(createdContact);
+                return mappedContact
               })
             }
         })
-        .then(() => {
-          console.log(newMap)
-        })
+        .then((mappedContacts) => {
+          groupMap = {}
+          newMap.forEach((contact) => {
+              groups = contact.foreignContactGroups;
+              address = Object.keys(contact.NpContact.addresses)[0]
+              groups.forEach((group) => {
+                mappedGroups = Object.keys(groupMap)
+                groupName = group.groupName
 
+                if (mappedGroups.indexOf(groupName) === -1) {
+                  groupMap[groupName] = [address]
+                } else {
+                  groupMap[groupName].push(address)
+                }
+              })
+          })
+          for (groupName in groupMap) {
+            members = groupMap[groupName]
+            utils.createContactGroup({
+              name: groupName,
+              members: members
+            })
+            .then((results) => {
+              console.log(results)
+            })
+          }
+        })
       })
     })
-
   },
-
-  syncContactGroups: function(contactGroups, credentials) {
-    Promise.map(contactGroups, (contactGroup) => {
-      var options = {
-        method: 'POST',
-        uri: `${apiBaseUrl}contactgroups/?token=${credentials.token}`,
-        body: {
-          name: contactGroup.GroupName,
-          members: contactGroup.Emails
-        },
-        json: true
-      };
-      return rp(options);
-    })
-    .then((results) => {
-      console.log(results);
-    })
-  },
-
   syncTests: function(tests, credentials) {
     Promise.map(tests, (test) => {
       var options = {
