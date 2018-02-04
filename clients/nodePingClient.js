@@ -18,17 +18,29 @@ module.exports = {
     .then((NpContacts) => {
       utils.mapContacts(NpContacts, foreignContacts)
       .then((newMap) => {
-        newMap.forEach((mappedContact) => {
-          if (_.has(mappedContact, 'NpContact')) {
-            //console.log(mappedContact)
-          } else {
-            utils.createContact({
-              name: mappedContact.contactAddress,
-              type: mappedContact.contactType,
-              address: mappedContact.contactAddress
-            })
-          }
+        Promise.map(newMap, (mappedContact) => {
+            if (_.has(mappedContact, 'NpContact')) {
+              //console.log(mappedContact)
+            } else {
+              utils.createContact({
+                name: mappedContact.contactAddress,
+                type: mappedContact.contactType,
+                address: mappedContact.contactAddress,
+                newaddresses: {
+                  name: mappedContact.contactAddress,
+                  type: mappedContact.contactType,
+                  address: mappedContact.contactAddress
+                }
+              })
+              .then((createdContact) => {
+                mappedContact.NpContact = createdContact;
+              })
+            }
         })
+        .then(() => {
+          console.log(newMap)
+        })
+
       })
     })
 

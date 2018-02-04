@@ -33,8 +33,5 @@ module.exports = {
     options.method = 'PUT'
     options.body = contactInfo
     return rp(options)
-    .then((results) => {
-      console.log(results)
-    })
   }
 }
