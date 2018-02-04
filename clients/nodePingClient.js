@@ -1,47 +1,37 @@
 const rp = require('request-promise');
 const Promise = require('bluebird');
-
+const utils = require('./NP_utils.js');
+const _ = require('lodash');
+//const credentials = require('../credentials.js');
 const apiBaseUrl = 'https://api.nodeping.com/api/1/';
 
 
 module.exports = {
-  syncContacts: function(contacts, credentials) {
-    contactIDs = Object.keys(contacts)
+  syncContacts: function(foreignContacts, credentials) {
     var options = {
       method: 'POST',
       uri: `${apiBaseUrl}contacts/?token=${credentials.token}`,
       json: true
     };
 
-    Promise.map(contactIDs, (contactID) => {
-      contactGroup = contacts[contactID]
-      contactGroup.emails.forEach((email) => {
-        options.body = {
-          name: email,
-          newaddresses: [{
-            address: email,
-            type: 'email'
-          }]
-        },
-        rp(options)
-        .then((results) => {
-          console.log(results)
-        })
-      })
-      contactGroup.mobiles.forEach((mobile) => {
-        options.body = {
-          name: mobile,
-          newaddresses: [{
-            address: mobile,
-            type: 'mobile'
-          }]
-        },
-        rp(options)
-        .then((results) => {
-          console.log(results)
+    utils.getNpContacts()
+    .then((NpContacts) => {
+      utils.mapContacts(NpContacts, foreignContacts)
+      .then((newMap) => {
+        newMap.forEach((mappedContact) => {
+          if (_.has(mappedContact, 'NpContact')) {
+            //console.log(mappedContact)
+          } else {
+            utils.createContact({
+              name: mappedContact.contactAddress,
+              type: mappedContact.contactType,
+              address: mappedContact.contactAddress
+            })
+          }
         })
       })
     })
+
   },
 
   syncContactGroups: function(contactGroups, credentials) {
