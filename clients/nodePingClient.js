@@ -7,19 +7,19 @@ const apiBaseUrl = 'https://api.nodeping.com/api/1/'
 
 
 const syncContactsAndGroups = (dataMap, credentials) => {
-  let foreignContacts = dataMap.contactMap;
-  
-  var options = {
+  let foreignContacts = dataMap.contactMap
+
+  let options = {
     method: 'POST',
     uri: `${apiBaseUrl}contacts/?token=${credentials.token}`,
     json: true
   }
 
-  utils.getNpContacts()
+  return utils.getNpContacts()
   .then((NpContacts) => {
-    utils.mapContacts(NpContacts, foreignContacts)
+    return utils.mapContacts(NpContacts, foreignContacts)
     .then((newMap) => {
-      Promise.map(newMap, (mappedContact) => {
+      return Promise.map(newMap, (mappedContact) => {
           if (_.has(mappedContact, 'NpContact')) {
             return mappedContact
           } else {
@@ -31,58 +31,56 @@ const syncContactsAndGroups = (dataMap, credentials) => {
           }
       })
       .then((mappedContacts) => {
-        utils.mapContactsToGroups(mappedContacts)
+        return utils.mapContactsToGroups(mappedContacts)
+        .then((createdGroups) => {
+          return createdGroups
+        })
       })
     })
+  })
+}
+
+const syncChecks = (checks, contactsAndGroups, credentials) => {
+  return Promise.map(checks, (check) => {
+    notifications = []
+    check.foreignContactIDs.forEach((foreignIDArray) => {
+      foreignIDArray.forEach((foreignID) => {
+        contactsAndGroups.forEach((contactGroup) => {
+          if (contactGroup.foreignID === parseInt(foreignID)) {
+            npID = contactGroup.npID
+            notification = {}
+            notification[npID] = {schedule: 'All', delay: 0}
+            notifications.push(notification)
+          }
+        })
+      })
+    })
+    newCheck = {
+      type: check.type,
+      label: check.label,
+      target: check.target,
+      public: check.public,
+      interval: check.interval,
+      notifications: notifications
+    }
+    let options = {
+      method: 'POST',
+      uri: `${apiBaseUrl}checks/?token=${credentials.token}`,
+      json: true,
+      body: newCheck
+    }
+    return rp(options)
   })
 }
 
 module.exports = {
   sync: function(data, credentials) {
     syncContactsAndGroups(data, credentials)
-    //console.log(data)
-  },
-
-  syncContacts: function(foreignContacts, credentials) {
-    var options = {
-      method: 'POST',
-      uri: `${apiBaseUrl}contacts/?token=${credentials.token}`,
-      json: true
-    }
-
-    utils.getNpContacts()
-    .then((NpContacts) => {
-      utils.mapContacts(NpContacts, foreignContacts)
-      .then((newMap) => {
-        Promise.map(newMap, (mappedContact) => {
-            if (_.has(mappedContact, 'NpContact')) {
-              return mappedContact
-            } else {
-              return utils.createContact(mappedContact)
-              .then((createdContact) => {
-                mappedContact.NpContact = _.cloneDeep(createdContact)
-                return mappedContact
-              })
-            }
-        })
-        .then((mappedContacts) => {
-          utils.mapContactsToGroups(mappedContacts)
-        })
-      })
+    .then((contactsAndGroups) => {
+      syncChecks(data.checks, contactsAndGroups, credentials)
     })
-  },
-  syncTests: function(tests, credentials) {
-    Promise.map(tests, (test) => {
-      var options = {
-        method: 'POST',
-        uri: `${apiBaseUrl}checks/?token=${credentials.token}`,
-        body: test,
-        json: true
-      }
-      return rp(options)
-    })
-    .then((results) => {
-      //console.log(results)
+    .then((syncedChecks) => {
+      console.log(syncedChecks)
     })
   }
 }

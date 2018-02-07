@@ -24,22 +24,20 @@ module.exports = {
     var emails = []
     contactGroups.forEach((contactGroup) => {
       emails = _.union(emails, contactGroup.Emails)
-
     })
     emails.forEach((email) => {
       var contact = {
         contactAddress: email,
         contactType: 'email',
-        foreignContactGroups: []
+        foreignContactGroups: {}
       }
       contact.contactAddress = email
       contact.contactType = 'email'
       contactGroups.forEach((contactGroup) => {
+        groupID = contactGroup.ContactID
+        groupName = contactGroup.GroupName
         if (contactGroup.Emails.indexOf(email > -1)) {
-          contact.foreignContactGroups.push({
-            groupName: contactGroup.GroupName,
-            groupID: contactGroup.ContactID
-          })
+          contact.foreignContactGroups[groupName] = {foreignID: groupID, npID: null}
         }
       })
       contacts.push(contact)
