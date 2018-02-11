@@ -47,9 +47,9 @@ const syncChecks = (checks, contactsAndGroups, credentials) => {
       foreignIDArray.forEach((foreignID) => {
         contactsAndGroups.forEach((contactGroup) => {
           if (contactGroup.foreignID === parseInt(foreignID)) {
-            let npID = contactGroup.npID
-            let notification = {}
-            let notification[npID] = {schedule: 'All', delay: 0}
+            npID = contactGroup.npID
+            notification = {}
+            notification[npID] = {schedule: 'All', delay: 0}
             notifications.push(notification)
           }
         })

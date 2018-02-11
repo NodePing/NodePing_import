@@ -1,6 +1,6 @@
 const rp = require('request-promise')
 const Promise = require('bluebird')
-const credentials = require('../credentials.js')
+const credentials = require('../../credentials.js')
 const _ = require('lodash')
 const apiBaseUrl = 'https://api.nodeping.com/api/1/'
 
@@ -39,19 +39,19 @@ module.exports = {
   mapContactsToGroups: function(contactMap) {
     const groupMap = {}
     contactMap.forEach((contact) => {
-      let mappedGroups = Object.keys(groupMap)
-      let contactGroups = contact.foreignContactGroups
+      mappedGroups = Object.keys(groupMap)
+      contactGroups = contact.foreignContactGroups
 
-      let addresses = Object.keys(contact.NpContact.addresses)
+      addresses = Object.keys(contact.NpContact.addresses)
       for (groupName in contactGroups) {
         if (mappedGroups.indexOf(groupName) === -1) {
-          let groupMap[groupName] = {
+          groupMap[groupName] = {
             foreignID: contactGroups[groupName].foreignID,
             addresses: addresses,
             npID: null
           }
         } else {
-          let groupMap[groupName].addresses = _.union(groupMap[groupName].addresses, addresses)
+          groupMap[groupName].addresses = _.union(groupMap[groupName].addresses, addresses)
         }
       }
     })
