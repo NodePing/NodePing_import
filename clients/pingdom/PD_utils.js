@@ -20,7 +20,17 @@ module.exports = {
     return NPChecks
   },
   mapUsersAndTeams: function(usersAndTeams) {
-    console.log(usersAndTeams.userTeams.teams)
-    console.log(usersAndTeams.users.users)
+    contacts = []
+    users = usersAndTeams.users.users
+    users.forEach((user) => {
+      contact = {
+        foreignID: user.id,
+        name: user.name,
+        addresses: user.email,
+        contactType: 'email',
+      }
+      contacts.push(contact)
+    })
+    return contacts
   }
 }
