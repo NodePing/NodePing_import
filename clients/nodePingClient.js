@@ -42,20 +42,20 @@ const syncContactsAndGroups = (dataMap, credentials) => {
 
 const syncChecks = (checks, contactsAndGroups, credentials) => {
   return Promise.map(checks, (check) => {
-    notifications = []
+    let notifications = []
     check.foreignContactIDs.forEach((foreignIDArray) => {
       foreignIDArray.forEach((foreignID) => {
         contactsAndGroups.forEach((contactGroup) => {
           if (contactGroup.foreignID === parseInt(foreignID)) {
-            npID = contactGroup.npID
-            notification = {}
-            notification[npID] = {schedule: 'All', delay: 0}
+            let npID = contactGroup.npID
+            let notification = {}
+            let notification[npID] = {schedule: 'All', delay: 0}
             notifications.push(notification)
           }
         })
       })
     })
-    newCheck = {
+    let newCheck = {
       type: check.type,
       label: check.label,
       target: check.target,

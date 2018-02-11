@@ -18,10 +18,10 @@ if (validSourceSites.indexOf(source) === -1) {
 }
 
 //selectively create required egressClient
-egressClient = require(`./clients/${source}EgressClient`)
+const egressClient = require(`./clients/${source}EgressClient`)
 
 //temporary source of credentials - convert to command line later
-egressCredentials = devCredentials[source]
+const egressCredentials = devCredentials[source]
 
 egressClient.getDataMap(egressCredentials)
 .then((dataMap) => {
