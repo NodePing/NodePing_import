@@ -72,12 +72,17 @@ const getUsersAndTeams = (credentials) => {
 
 module.exports = {
   getDataMap: function(credentials) {
-    getChecks(credentials)
+    return getChecks(credentials)
     .then((checks) => {
       const NPChecks = utils.mapPDChecksToNPChecks(checks)
-      getUsersAndTeams(credentials)
+      return getUsersAndTeams(credentials)
       .then((usersAndTeams) => {
         const contactMap = utils.mapUsersAndTeams(usersAndTeams)
+        dataMap = {
+          contactMap: contactMap,
+          checks: NPChecks
+        }
+        return dataMap
       })
     })
   }
