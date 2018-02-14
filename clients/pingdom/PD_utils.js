@@ -1,5 +1,22 @@
 const _ = require('lodash')
 
+
+const getUserTeams = (userID, teams) => {
+    userTeams = {}
+    teams.forEach((team) => {
+      team.users.forEach((user) => {
+        if (parseInt(user.id) === parseInt(userID)) {
+          userTeams[team.name] = {
+            foreignID: team.id,
+            npID: null
+          }
+        }
+      })
+    })
+    return userTeams
+}
+
+
 module.exports = {
   mapPDChecksToNPChecks: function(checks) {
     const NPChecks = []
@@ -21,13 +38,17 @@ module.exports = {
   },
   mapUsersAndTeams: function(usersAndTeams) {
     contacts = []
-    users = usersAndTeams.users.users
+    let teams = usersAndTeams.userTeams.teams
+    let users = usersAndTeams.users.users
+
     users.forEach((user) => {
+      let userTeams = getUserTeams(user.id, teams)
       contact = {
         foreignID: user.id,
         name: user.name,
-        addresses: user.email,
+        contactAddress: user.email[0].address,
         contactType: 'email',
+        foreignContactGroups: userTeams
       }
       contacts.push(contact)
     })
