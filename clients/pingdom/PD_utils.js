@@ -20,16 +20,17 @@ const getUserTeams = (userID, teams) => {
 module.exports = {
   mapPDChecksToNPChecks: function(checks) {
     const NPChecks = []
+
     checks.forEach((PDCheck) => {
       type = Object.keys(PDCheck.check.type)[0]
       let check = {
         type: type,
         label: PDCheck.check.name,
         target: PDCheck.check.hostname,
-        enabled: false,
-        public: true,
-        interval: PDCheck.check.resolution,
-        foreignContactIDs: PDCheck.check.userids
+        enabled: true,
+        public: 1,
+        interval: PDCheck.check.resolution * 60,
+        foreignContactIDs: PDCheck.check.userids || []
       }
 
       NPChecks.push(check)
@@ -40,7 +41,6 @@ module.exports = {
     contacts = []
     let teams = usersAndTeams.userTeams.teams
     let users = usersAndTeams.users.users
-
     users.forEach((user) => {
       let userTeams = getUserTeams(user.id, teams)
       contact = {
