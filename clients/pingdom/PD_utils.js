@@ -30,7 +30,7 @@ module.exports = {
         enabled: true,
         public: 1,
         interval: PDCheck.check.resolution * 60,
-        foreignContactIDs: PDCheck.check.userids || []
+        foreignContactIDs: [PDCheck.check.userids  || []]
       }
 
       NPChecks.push(check)
