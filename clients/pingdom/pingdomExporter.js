@@ -8,13 +8,13 @@ const options = {
   json: true
 }
 
-const getActions = (credentials) => {
-  options.uri = `${apiBaseUrl}`
+const getTeams = (credentials) => {
+  options.uri = `${apiBaseUrl}/teams`
 	return rp(options)
 }
 
-const getAnalysis = (credentials, checkID) => {
-  options.uri = `${apiBaseUrl}/analysis/${checkid}`
+const getActions = (credentials) => {
+  options.uri = `${apiBaseUrl}`
 	return rp(options)
 }
 
@@ -58,11 +58,6 @@ const getSharedReports = (credentials) => {
 	return rp(options)
 }
 
-const getCheckResults = (credentials, checkID) => {
-  options.uri = `${apiBaseUrl}/results/${checkID}`
-	return rp(options)
-}
-
 const getServerTime = (credentials) => {
   options.uri = `${apiBaseUrl}/servertime`
 	return rp(options)
@@ -70,6 +65,11 @@ const getServerTime = (credentials) => {
 
 const getSettings = (credentials) => {
   options.uri = `${apiBaseUrl}/settings`
+	return rp(options)
+}
+
+const getCheckResults = (credentials, checkID) => {
+  options.uri = `${apiBaseUrl}/results/${checkID}`
 	return rp(options)
 }
 
@@ -98,7 +98,7 @@ const getProbeSummary = (credentials, checkID) => {
 	return rp(options)
 }
 
-const getTeams = (credentials) => {
-  options.uri = `${apiBaseUrl}/teams`
+const getAnalysis = (credentials, checkID) => {
+  options.uri = `${apiBaseUrl}/analysis/${checkid}`
 	return rp(options)
 }
