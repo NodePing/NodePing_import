@@ -16,6 +16,13 @@ const getUserTeams = (userID, teams) => {
     return userTeams
 }
 
+const getCustrole = (access_level) => {
+  if (access_level == 'owner') {
+    return access_level
+  } else {
+    return "view"
+  }
+}
 
 module.exports = {
   mapPDChecksToNPChecks: function(checks) {
@@ -43,8 +50,10 @@ module.exports = {
     let users = usersAndTeams.users.users
     users.forEach((user) => {
       let userTeams = getUserTeams(user.id, teams)
+
       contact = {
         foreignID: user.id,
+        custrole: getCustrole(user.access_level),
         name: user.name,
         contactAddress: user.email[0].address,
         contactType: 'email',
