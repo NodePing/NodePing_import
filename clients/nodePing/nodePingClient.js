@@ -55,7 +55,10 @@ const syncChecks = (checks, contactsAndGroups, credentials) => {
       foreignIDArray.forEach((foreignID) => {
         createdGroups.forEach((createdGroup) => {
           if (parseInt(createdGroup.foreignID) === parseInt(foreignID)) {
-            console.log(createdGroup)
+            npID = createdGroup.npID
+            notification = {}
+            notification[npID] = {shedule: 'All', delay: 0}
+            notifications.push(notification)
           }
         })
         mappedContacts.forEach((contact) => {
@@ -72,9 +75,10 @@ const syncChecks = (checks, contactsAndGroups, credentials) => {
       type: check.type.toUpperCase(),
       label: check.label,
       target: normalizeUrl(check.target),
-      public: true,
-      enabled: true,
-      interval: check.interval
+      public: check.public,
+      enabled: check.enabled,
+      interval: check.interval,
+      notifications: notifications
     }
     let options = {
       method: 'POST',
@@ -83,6 +87,9 @@ const syncChecks = (checks, contactsAndGroups, credentials) => {
       body: newCheck
     }
     return rp(options)
+    .then((results) => {
+      //console.log(results)
+    })
   })
 }
 
@@ -91,9 +98,6 @@ module.exports = {
     syncContactsAndGroups(data, credentials)
     .then((contactsAndGroups) => {
       syncChecks(data.checks, contactsAndGroups, credentials)
-    })
-    .then((syncedChecks) => {
-      console.log(syncedChecks)
     })
   }
 }
