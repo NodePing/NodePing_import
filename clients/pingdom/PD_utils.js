@@ -36,8 +36,8 @@ module.exports = {
         type: type,
         label: PDCheck.check.name,
         target: PDCheck.check.hostname,
-        enabled: true,
-        public: 1,
+        enabled: "active",
+        public: true,
         interval: PDCheck.check.resolution * 60,
         foreignContactIDs: [PDCheck.check.userids  || []]
       }
