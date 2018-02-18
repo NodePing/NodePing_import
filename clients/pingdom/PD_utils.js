@@ -17,10 +17,12 @@ const getUserTeams = (userID, teams) => {
 }
 
 const getCustrole = (access_level) => {
-  if (access_level == 'owner') {
+  if (access_level === 'owner') {
     return access_level
+  } else if (access_level === 'default') {
+    return 'edit'
   } else {
-    return "view"
+    return 'view'
   }
 }
 
