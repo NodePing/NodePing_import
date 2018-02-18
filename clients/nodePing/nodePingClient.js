@@ -1,5 +1,6 @@
 const rp = require('request-promise')
 const Promise = require('bluebird')
+const normalizeUrl = require('normalize-url');
 const utils = require('./NP_utils.js')
 const _ = require('lodash')
 //const credentials = require('../credentials.js')
@@ -33,7 +34,11 @@ const syncContactsAndGroups = (dataMap, credentials) => {
       .then((mappedContacts) => {
         return utils.mapContactsToGroups(mappedContacts)
         .then((createdGroups) => {
-          return createdGroups
+
+          return {
+            createdGroups,
+            mappedContacts
+          }
         })
       })
     })
@@ -41,27 +46,35 @@ const syncContactsAndGroups = (dataMap, credentials) => {
 }
 
 const syncChecks = (checks, contactsAndGroups, credentials) => {
+  createdGroups = contactsAndGroups.createdGroups
+  mappedContacts = contactsAndGroups.mappedContacts
   return Promise.map(checks, (check) => {
-    let notifications = []
+    notifications = []
     check.foreignContactIDs.forEach((foreignIDArray) => {
+
       foreignIDArray.forEach((foreignID) => {
-        contactsAndGroups.forEach((contactGroup) => {
-          if (contactGroup.foreignID === parseInt(foreignID)) {
-            npID = contactGroup.npID
+        createdGroups.forEach((createdGroup) => {
+          if (parseInt(createdGroup.foreignID) === parseInt(foreignID)) {
+            console.log(createdGroup)
+          }
+        })
+        mappedContacts.forEach((contact) => {
+          if (parseInt(contact.foreignID) === parseInt(foreignID)) {
+            npID = Object.keys(contact.NpContact.addresses)[0]
             notification = {}
             notification[npID] = {schedule: 'All', delay: 0}
             notifications.push(notification)
           }
+          })
         })
       })
-    })
     let newCheck = {
-      type: check.type,
+      type: check.type.toUpperCase(),
       label: check.label,
-      target: check.target,
-      public: check.public,
-      interval: check.interval,
-      notifications: notifications
+      target: normalizeUrl(check.target),
+      public: true,
+      enabled: true,
+      interval: check.interval
     }
     let options = {
       method: 'POST',
