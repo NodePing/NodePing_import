@@ -17,11 +17,34 @@ const getMonitors = (credentials) => {
   return rp(options)
 }
 
+const getAlertContacts = (credentials) => {
+  let options = {
+    uri: `${apiBaseUrl}/getAlertContacts`,
+    method: 'POST',
+    body: {
+      api_key: credentials.token
+    },
+    json: true
+  }
+  return rp(options)
+  .then((contacts) => {
+    return utils.mapContacts(contacts)
+  })
+}
+
 module.exports = {
   getDataMap: function(credentials) {
     return getMonitors(credentials)
-    .then((monitors) => {
-      const checks = utils.mapMonitorsToChecks(monitors)
+    .then((monitorResults) => {
+      const checks = utils.mapMonitorsToChecks(monitorResults.monitors)
+      return getAlertContacts(credentials)
+      .then((contactMap) => {
+        dataMap = {
+          contactMap,
+          checks
+        }
+        return dataMap
+      })
     })
   }
 }
