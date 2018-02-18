@@ -86,6 +86,7 @@ const syncChecks = (checks, contactsAndGroups, credentials) => {
       json: true,
       body: newCheck
     }
+    console.log(`Creating new check: ${newCheck.label}`)
     return rp(options)
     .then((results) => {
       //console.log(results)

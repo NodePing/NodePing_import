@@ -12,6 +12,7 @@ let options = {
 }
 
 const createContactGroup = (groupInfo) => {
+  console.log(`creating new ContactGroup: ${groupInfo.name}`)
   options.uri = `${apiBaseUrl}contactgroups/?token=${npCredentials.token}`
   options.method = 'POST'
   options.body = groupInfo
@@ -75,6 +76,7 @@ module.exports = {
         address: contactInfo.contactAddress
       }]
     }
+    console.log(`Creating new contact: ${contactInfo.contactAddress}`)
     options.method = 'POST'
     options.body = payload
     return rp(options)
