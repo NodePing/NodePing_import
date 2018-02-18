@@ -10,7 +10,8 @@ module.exports = {
         target: monitor.url,
         enabled: "active",
         public: true,
-        interval: monitor.interval
+        interval: monitor.interval,
+        foreignContactIDs: []
       }
       checks.push(check)
     })
@@ -27,8 +28,18 @@ module.exports = {
         contactType: 'email',
         foreignContactGroups: []
       }
-      mappedContacts.push(contact)
+      mappedContacts.push(mappedContact)
     })
     return mappedContacts
+  },
+  mapContactsToChecks: function(checks, contactMap) {
+    contacts = []
+    contactMap.forEach((contact) => {
+      contacts.push(contact.foreignID)
+    })
+    checks.forEach((check) => {
+      check.foreignContactIDs = [contacts]
+    })
+    return checks
   }
 }

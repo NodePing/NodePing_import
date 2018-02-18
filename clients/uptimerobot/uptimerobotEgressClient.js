@@ -39,6 +39,7 @@ module.exports = {
       const checks = utils.mapMonitorsToChecks(monitorResults.monitors)
       return getAlertContacts(credentials)
       .then((contactMap) => {
+        const mappedChecks = utils.mapContactsToChecks(checks, contactMap)
         dataMap = {
           contactMap,
           checks
