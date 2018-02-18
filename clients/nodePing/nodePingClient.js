@@ -3,7 +3,6 @@ const Promise = require('bluebird')
 const normalizeUrl = require('normalize-url');
 const utils = require('./NP_utils.js')
 const _ = require('lodash')
-//const credentials = require('../credentials.js')
 const apiBaseUrl = 'https://api.nodeping.com/api/1/'
 
 
@@ -34,7 +33,6 @@ const syncContactsAndGroups = (dataMap, credentials) => {
       .then((mappedContacts) => {
         return utils.mapContactsToGroups(mappedContacts)
         .then((createdGroups) => {
-
           return {
             createdGroups,
             mappedContacts
@@ -51,7 +49,6 @@ const syncChecks = (checks, contactsAndGroups, credentials) => {
   return Promise.map(checks, (check) => {
     notifications = []
     check.foreignContactIDs.forEach((foreignIDArray) => {
-
       foreignIDArray.forEach((foreignID) => {
         createdGroups.forEach((createdGroup) => {
           if (parseInt(createdGroup.foreignID) === parseInt(foreignID)) {
@@ -88,9 +85,6 @@ const syncChecks = (checks, contactsAndGroups, credentials) => {
     }
     console.log(`Creating new check: ${newCheck.label}`)
     return rp(options)
-    .then((results) => {
-      //console.log(results)
-    })
   })
 }
 
