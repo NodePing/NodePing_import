@@ -29,6 +29,7 @@ module.exports = {
       var contact = {
         contactAddress: email,
         contactType: 'email',
+        custrole: 'owner',
         foreignContactGroups: {}
       }
       contact.contactAddress = email
