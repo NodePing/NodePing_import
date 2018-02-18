@@ -5,9 +5,15 @@ const argv = require('minimist')(process.argv.slice(2))
 //temporary hard-coded credentials
 const devCredentials = require('./credentials.js')
 
+let source = null
+
 //temporary source of credentials - convert to command line later
 const npCredentials = devCredentials.nodePing
-const source = argv.s
+
+if (argv.s) {
+  source = argv.s.toLowerCase()
+}
+
 const validSourceSites = ['statuscake', 'pingdom']
 
 if (validSourceSites.indexOf(source) === -1) {
@@ -24,7 +30,6 @@ const egressClient = require(`./clients/${source}/${source}EgressClient`)
 const egressCredentials = devCredentials[source]
 
 egressClient.getDataMap(egressCredentials)
-.then((dataMap) => {
-  console.log(dataMap)
-  //npClient.sync(dataMap, npCredentials)
+   .then((dataMap) => {
+     npClient.sync(dataMap, npCredentials)
 })
