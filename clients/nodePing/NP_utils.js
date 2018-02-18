@@ -68,6 +68,7 @@ module.exports = {
     let payload = {
       name: contactInfo.contactAddress,
       type: contactInfo.contactType,
+      custrole: contactInfo.custrole,
       address: contactInfo.contactAddress,
       newaddresses: [{
         type: contactInfo.contactType,
