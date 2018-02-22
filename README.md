@@ -13,11 +13,18 @@ module.exports = {
     token: '<nodePingToken>',
     user: '<nodePingUser>'
   },
-  statusCake: {
+  statuscake: {
     token: '<statusCakeToken>',
     user: '<statusCakeUser>'
   }
 };
 ```
+caveats:
+  For pingdom, include a 'pwd' property, which is your pingdom password
 
-Then execute `node sync-client.js -s statusCake`
+Then execute
+`node sync-client.js -s statuscake` to sync data from the source to NodePing
+
+It is recommended to additionally export all data from the source platform by using the `--export` flag as follows:
+
+`node sync-client.js -s statuscake --export`
