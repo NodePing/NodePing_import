@@ -23,13 +23,19 @@ if (validSourceSites.indexOf(source) === -1) {
   process.exit()
 }
 
-//selectively create required egressClient
-const egressClient = require(`./clients/${source}/${source}EgressClient`)
-
-//temporary source of credentials - convert to command line later
 const egressCredentials = devCredentials[source]
 
-egressClient.getDataMap(egressCredentials)
-   .then((dataMap) => {
-     npClient.sync(dataMap, npCredentials)
-})
+if (argv.export) {
+  const exportClient = require(`./clients/${source}/${source}Exporter`)
+  exportClient.export(egressCredentials)
+} else {
+  //selectively create required egressClient
+  const egressClient = require(`./clients/${source}/${source}EgressClient`)
+
+  //temporary source of credentials - convert to command line later
+
+  egressClient.getDataMap(egressCredentials)
+     .then((dataMap) => {
+       npClient.sync(dataMap, npCredentials)
+  })
+}
