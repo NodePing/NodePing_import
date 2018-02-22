@@ -14,7 +14,7 @@ if (argv.s) {
   source = argv.s.toLowerCase()
 }
 
-const validSourceSites = ['statuscake', 'pingdom']
+const validSourceSites = ['statuscake', 'pingdom', 'uptimerobot']
 
 if (validSourceSites.indexOf(source) === -1) {
   console.log('Sorry, no client exists for that source!')
