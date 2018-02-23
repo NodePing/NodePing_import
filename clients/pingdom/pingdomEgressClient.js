@@ -4,6 +4,11 @@ const utils = require('./PD_utils.js')
 
 const apiBaseUrl = 'https://api.pingdom.com/api/2.1'
 
+const options = {
+  method: 'GET',
+  json: true
+}
+
 const authHeader = (credentials) => {
   let auth = "Basic " + new Buffer(credentials.user + ":" + credentials.pwd).toString("base64");
   return {
@@ -12,55 +17,35 @@ const authHeader = (credentials) => {
   }
 }
 
-const getCheck = (credentials, checkID) => {
-  let options = {
-    method: 'GET',
-    headers: authHeader(credentials),
-    uri: `${apiBaseUrl}/checks/${checkID}`,
-    json: true
-  }
+const getCheck = (checkID) => {
+  options.uri = `${apiBaseUrl}/checks/${checkID}`
   return rp(options)
 }
 
-const getChecks = (credentials) => {
-    let options = {
-      method: 'GET',
-      headers: authHeader(credentials),
-      uri: `${apiBaseUrl}/checks`,
-      json: true
-    }
-    return rp(options)
+const getChecks = () => {
+  options.uri = `${apiBaseUrl}/checks`
+  return rp(options)
     .then((response) => {
       return Promise.map(response.checks, (check) => {
-        return getCheck(credentials, check.id)
+        return getCheck(check.id)
       })
     })
 }
 
-const getUserTeams = (credentials) => {
-  let options = {
-    method: 'GET',
-    headers: authHeader(credentials),
-    uri: `${apiBaseUrl}/teams`,
-    json: true
-  }
+const getUserTeams = () => {
+  options.uri = `${apiBaseUrl}/teams`
   return rp(options)
 }
 
-const getUsers = (credentials) => {
-  let options = {
-    method: 'GET',
-    headers: authHeader(credentials),
-    uri: `${apiBaseUrl}/users`,
-    json: true
-  }
+const getUsers = () => {
+  options.uri = `${apiBaseUrl}/users`
   return rp(options)
 }
 
-const getUsersAndTeams = (credentials) => {
-  return getUsers(credentials)
+const getUsersAndTeams = () => {
+  return getUsers()
   .then((users) => {
-    return getUserTeams(credentials)
+    return getUserTeams()
     .then((userTeams) => {
       return {
         userTeams,
@@ -72,10 +57,11 @@ const getUsersAndTeams = (credentials) => {
 
 module.exports = {
   getDataMap: function(credentials) {
-    return getChecks(credentials)
+    options.headers = authHeader(credentials)
+    return getChecks()
     .then((checks) => {
       const NPChecks = utils.mapPDChecksToNPChecks(checks)
-      return getUsersAndTeams(credentials)
+      return getUsersAndTeams()
       .then((usersAndTeams) => {
         const contactMap = utils.mapUsersAndTeams(usersAndTeams)
         dataMap = {
