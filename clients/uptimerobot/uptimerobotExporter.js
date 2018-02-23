@@ -50,39 +50,30 @@ const getAccountDetails = (credentials) => {
   return rp(options)
 }
 
-const write = (data) => {
-  let columns = Object.keys(data)
-  let values = Object.values(data)
-  var writer = csvWriter({ headers: columns})
-  writer.pipe(fs.createWriteStream('out.csv'))
-  writer.write(values)
+const write = (columnNames, rows, entityName) => {
+  var writer = csvWriter({ headers: columnNames})
+  writer.pipe(fs.createWriteStream(`${entityName}.csv`))
+  rows.forEach((row) => {
+    writer.write(row)
+  })
   writer.end()
+}
+
+const transformMonitorData = (data) => {
+  rows = []
+  data.monitors.forEach((monitor) => {
+    columnNames = Object.keys(monitor)
+    values = Object.values(monitor)
+    rows.push(values)
+  })
+  write(columnNames, rows, 'monitors')
 }
 
 module.exports = {
   export: function(credentials) {
     getMonitors(credentials)
     .then((data) => {
-      write(data.monitors)
+      monitors = transformMonitorData(data)
     })
-    getAccountDetails(credentials) {
-      .then((data) => {
-        write(data.AccountDetails)
-      })
-    }
-    getMWindows(credentials) {
-      .then((data) => {
-        write(data.mwindows)
-      })
-    }
-    getAlertContacts(credentials) {
-      .then((data) => {
-        write(data.alert_contacts)
-      })
-    }
-    getPSPs(credentials) {
-      .then((data) => {
-        write(data.psps)
-      })
-    }
   }
+}
