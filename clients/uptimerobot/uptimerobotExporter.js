@@ -108,20 +108,20 @@ module.exports = {
       api_key: credentials.token
     }
     getMonitors()
-    .then((data) => {
-      writeMonitors(data)
+    .then((monitorData) => {
+      writeMonitors(monitorData)
     })
     getMWindows()
-    .then((data) => {
-      writeMWindows(data)
+    .then((mWindowData) => {
+      writeMWindows(mWindowData)
     })
     getAlertContacts()
-    .then((data) => {
-      writeContacts(data)
+    .then((contactsData) => {
+      writeContacts(contactsData)
     })
     getAccountDetails()
-    .then((data) => {
-      writeAccountDetails(data)
+    .then((accountData) => {
+      writeAccountDetails(accountData)
     })
     getPSPs()
     .then((pspData) => {
