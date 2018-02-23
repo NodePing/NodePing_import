@@ -1,5 +1,7 @@
 const rp = require('request-promise')
 const Promise = require('bluebird')
+const csvWriter = require('csv-write-stream')
+const fs = require('fs')
 
 const apiBaseUrl = 'https://api.pingdom.com/api/2.1'
 
@@ -21,6 +23,18 @@ const getActions = () => {
 const getChecks = () => {
   options.uri = `${apiBaseUrl}/checks`
 	return rp(options)
+}
+
+const writeChecks = (checkData) => {
+  const rows = []
+  let columnNames
+  let values
+  checkData.checks.forEach((check) => {
+    columnNames = Object.keys(check)
+    values = Object.values(check)
+    rows.push(values)
+  })
+  write(columnNames, rows, 'checks')
 }
 
 const getCredits = () => {
@@ -111,8 +125,21 @@ const authHeader = (credentials) => {
   }
 }
 
+const write = (columnNames, rows, entityName) => {
+  var writer = csvWriter({ headers: columnNames})
+  writer.pipe(fs.createWriteStream(`${entityName}.csv`))
+  rows.forEach((row) => {
+    writer.write(row)
+  })
+  writer.end()
+}
+
 module.exports = {
   export: function(credentials) {
     options.headers = authHeader(credentials)
+    getChecks()
+    .then((checkData) =>{
+      writeChecks(checkData)
+    })
   }
 }
