@@ -10,13 +10,8 @@ const options = {
   json:true
 }
 
-
-const getContactGroups = (credentials) => {
+const getContactGroups = () => {
   options.uri = `${apiBaseUrl}/ContactGroups`
-  options.headers = {
-      'API': credentials.token,
-      'Username': credentials.user
-  }
   return rp(options)
 }
 
@@ -32,37 +27,37 @@ const writeContacts = (data) => {
   write(columnNames, rows, 'contacts')
 }
 
-const getMaintenanceWindows = (credentials) => {
+const getMaintenanceWindows = () => {
   options.uri = `${apiBaseUrl}/Maintenance`
   return rp(options)
 }
 
-const getPageSpeedTests = (credentials) => {
+const getPageSpeedTests = () => {
   options.uri = `${apiBaseUrl}/PageSpeed`
   return rp(options)
 }
 
-const getPageSpeedHistory = (credentials) => {
+const getPageSpeedHistory = () => {
   options.uri = `${apiBaseUrl}/PageSpeed/History`
   return rp(options)
 }
 
-const getPerformanceData = (credentials) => {
+const getPerformanceData = () => {
   options.uri = `${apiBaseUrl}/Tests/Checks`
   return rp(options)
 }
 
-const getPeriodData = (credentials) => {
+const getPeriodData = () => {
   options.uri = `${apiBaseUrl}/Tests/Periods`
   return rp(options)
 }
 
-const getSSLTests = (credentials) => {
+const getSSLTests = () => {
   options.uri = `${apiBaseUrl}/SSL`
   return rp(options)
 }
 
-const getAllTests = (credentials) => {
+const getAllTests = () => {
   options.uri = `${apiBaseUrl}/Tests`
   return rp(options)
 }
@@ -91,14 +86,18 @@ const write = (columnNames, rows, entityName) => {
 
 module.exports = {
   export: function(credentials) {
-    getContactGroups(credentials)
+    options.headers = {
+        'API': credentials.token,
+        'Username': credentials.user
+    }
+    getContactGroups()
     .then((data) => {
       writeContacts(data)
     })
-    getAllTests(credentials)
+    getAllTests()
     .then((data) => {
       writeTests(data)
     })
-    
+
   }
 }
