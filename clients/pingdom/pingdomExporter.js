@@ -8,97 +8,111 @@ const options = {
   json: true
 }
 
-const getTeams = (credentials) => {
+const getTeams = () => {
   options.uri = `${apiBaseUrl}/teams`
 	return rp(options)
 }
 
-const getActions = (credentials) => {
+const getActions = () => {
   options.uri = `${apiBaseUrl}`
 	return rp(options)
 }
 
-const getChecks = (credentials) => {
+const getChecks = () => {
   options.uri = `${apiBaseUrl}/checks`
 	return rp(options)
 }
 
-const getCredits = (credentials) => {
+const getCredits = () => {
   options.uri = `${apiBaseUrl}/credits`
 	return rp(options)
 }
 
-const getMaintenanceWindows = (credentials) => {
+const getMaintenanceWindows = () => {
   options.uri = `${apiBaseUrl}/maintenance`
 	return rp(options)
 }
 
-const getProbes = (credentials) => {
+const getProbes = () => {
   options.uri = `${apiBaseUrl}/probes`
 	return rp(options)
 }
 
-const getReferences = (credentials) => {
+const getReferences = () => {
   options.uri = `${apiBaseUrl}/reference`
 	return rp(options)
 }
 
-const getEmailReports = (credentials) => {
+const getEmailReports = () => {
   options.uri = `${apiBaseUrl}/reports.email`
 	return rp(options)
 }
 
-const getPublicReports = (credentials) => {
+const getPublicReports = () => {
   options.uri = `${apiBaseUrl}/reports.public`
 	return rp(options)
 }
 
-const getSharedReports = (credentials) => {
+const getSharedReports = () => {
   options.uri = `${apiBaseUrl}/reports.shared`
 	return rp(options)
 }
 
-const getServerTime = (credentials) => {
+const getServerTime = () => {
   options.uri = `${apiBaseUrl}/servertime`
 	return rp(options)
 }
 
-const getSettings = (credentials) => {
+const getSettings = () => {
   options.uri = `${apiBaseUrl}/settings`
 	return rp(options)
 }
 
-const getCheckResults = (credentials, checkID) => {
+const getCheckResults = (checkID) => {
   options.uri = `${apiBaseUrl}/results/${checkID}`
 	return rp(options)
 }
 
-const getSummaryAverage = (credentials, checkID) => {
+const getSummaryAverage = (checkID) => {
   options.uri = `${apiBaseUrl}/summary.average/${checkID}`
 	return rp(options)
 }
 
-const getSummaryHourly = (credentials, checkID) => {
+const getSummaryHourly = (checkID) => {
   options.uri = `${apiBaseUrl}/summary.hoursofday/${checkID}`
 	return rp(options)
 }
 
-const getOutages = (credentials, checkID) => {
+const getOutages = (checkID) => {
   options.uri = `${apiBaseUrl}/summary.outage/${checkID}`
 	return rp(options)
 }
 
-const getPerformanceSummary = (credentials, checkID) => {
+const getPerformanceSummary = (checkID) => {
   options.uri = `${apiBaseUrl}/summary.performance/${checkID}`
 	return rp(options)
 }
 
-const getProbeSummary = (credentials, checkID) => {
+const getProbeSummary = (checkID) => {
   options.uri = `${apiBaseUrl}/summary.probes/${checkID}`
 	return rp(options)
 }
 
-const getAnalysis = (credentials, checkID) => {
+const getAnalysis = (checkID) => {
   options.uri = `${apiBaseUrl}/analysis/${checkid}`
 	return rp(options)
+}
+
+const authHeader = (credentials) => {
+  let auth = "Basic " + new Buffer(credentials.user + ":" + credentials.pwd).toString("base64");
+  return {
+    'App-Key': credentials.token,
+    Authorization : auth
+  }
+}
+
+module.exports = {
+  export: function(credentials) {
+    options.headers = authHeader(credentials)
+  }
 }
