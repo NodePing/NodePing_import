@@ -15,6 +15,25 @@ const getTeams = () => {
 	return rp(options)
 }
 
+const writeTeams = (teamData) => {
+  const rows = []
+  let columnNames
+  let values
+  teamData.teams.forEach((team) => {
+    columnNames = ['teamID', 'teamName', 'userID', 'userName', 'userEmail']
+    teamID = team.id
+    teamName = team.name
+    teamUsers = team.users
+    teamUsers.forEach((teamUser) => {
+      userID = teamUser.id
+      userName = teamUser.name
+      userEmail = teamUser.email
+      rows.push([teamID, teamName, userID, userName, userEmail])
+    })
+  })
+  write(columnNames, rows, 'teams')
+}
+
 const getActions = () => {
   options.uri = `${apiBaseUrl}`
 	return rp(options)
@@ -140,6 +159,10 @@ module.exports = {
     getChecks()
     .then((checkData) =>{
       writeChecks(checkData)
+    })
+    getTeams()
+    .then((teamData) => {
+      writeTeams(teamData)
     })
   }
 }
