@@ -10,11 +10,8 @@ const options = {
   json: true
 }
 
-const getMonitors = (credentials) => {
+const getMonitors = () => {
   options.uri = `${apiBaseUrl}/getMonitors`
-  options.body = {
-    api_key: credentials.token
-  }
   return rp(options)
 }
 
@@ -30,11 +27,8 @@ const writeMonitors = (data) => {
   write(columnNames, rows, 'monitors')
 }
 
-const getMWindows = (credentials) => {
+const getMWindows = () => {
   options.uri = `${apiBaseUrl}/getMWindows`
-  options.body = {
-    api_key: credentials.token
-  }
   return rp(options)
 }
 
@@ -50,19 +44,13 @@ const writeMWindows = (data) => {
   write(columnNames, rows, 'mwindows')
 }
 
-const getPSPs = (credentials) => {
+const getPSPs = () => {
   options.uri = `${apiBaseUrl}/getPSPs`
-  options.body = {
-    api_key: credentials.token
-  }
   return rp(options)
 }
 
-const getAlertContacts = (credentials) => {
+const getAlertContacts = () => {
   options.uri = `${apiBaseUrl}/getAlertContacts`
-  options.body = {
-    api_key: credentials.token
-  }
   return rp(options)
 }
 
@@ -78,11 +66,8 @@ const writeContacts = (data) => {
   write(columnNames, rows, 'contacts')
 }
 
-const getAccountDetails = (credentials) => {
+const getAccountDetails = () => {
   options.uri = `${apiBaseUrl}/getAccountDetails`
-  options.body = {
-    api_key: credentials.token
-  }
   return rp(options)
 }
 
@@ -106,24 +91,26 @@ const write = (columnNames, rows, entityName) => {
 }
 
 
-
 module.exports = {
   export: function(credentials) {
-    getMonitors(credentials)
+    options.body = {
+      api_key: credentials.token
+    }
+    getMonitors()
     .then((data) => {
       writeMonitors(data)
     })
-    getMWindows(credentials)
+    getMWindows()
     .then((data) => {
       writeMWindows(data)
     })
-    getAlertContacts(credentials)
+    getAlertContacts()
     .then((data) => {
       writeContacts(data)
     })
-    getAccountDetails(credentials)
+    getAccountDetails()
     .then((data) => {
-      writeAccountDetails(data)
+      writeAccountDetails()
     })
   }
 }
