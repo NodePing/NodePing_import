@@ -49,6 +49,17 @@ const getPSPs = () => {
   return rp(options)
 }
 
+const writePSPs = (pspData) => {
+  const rows = []
+  let columnNames
+  let values
+  pspData.psps.forEach((psp) => {
+    columnNames = Object.keys(psp)
+    values = Object.values(psp)
+    rows.push(values)
+  })
+  write(columnNames, rows, 'psps')}
+
 const getAlertContacts = () => {
   options.uri = `${apiBaseUrl}/getAlertContacts`
   return rp(options)
@@ -110,7 +121,11 @@ module.exports = {
     })
     getAccountDetails()
     .then((data) => {
-      writeAccountDetails()
+      writeAccountDetails(data)
+    })
+    getPSPs()
+    .then((pspData) => {
+      writePSPs(pspData)
     })
   }
 }
