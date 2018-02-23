@@ -5,15 +5,15 @@ const utils = require('./NP_utils.js')
 const _ = require('lodash')
 const apiBaseUrl = 'https://api.nodeping.com/api/1/'
 
+const options = {
+  method: 'POST',
+  json: true
+}
 
 const syncContactsAndGroups = (dataMap, credentials) => {
   let foreignContacts = dataMap.contactMap
 
-  let options = {
-    method: 'POST',
-    uri: `${apiBaseUrl}contacts/?token=${credentials.token}`,
-    json: true
-  }
+  options.uri = `${apiBaseUrl}contacts/?token=${credentials.token}`
 
   return utils.getNpContacts()
   .then((NpContacts) => {
@@ -77,12 +77,10 @@ const syncChecks = (checks, contactsAndGroups, credentials) => {
       interval: check.interval,
       notifications: notifications
     }
-    let options = {
-      method: 'POST',
-      uri: `${apiBaseUrl}checks/?token=${credentials.token}`,
-      json: true,
-      body: newCheck
-    }
+
+    options.uri = `${apiBaseUrl}checks/?token=${credentials.token}`
+    options.body = newCheck
+
     console.log(`Creating new check: ${newCheck.label}`)
     return rp(options)
   })
