@@ -125,6 +125,20 @@ const getCheckResults = (checkID) => {
 	return rp(options)
 }
 
+const getAllCheckResults = (checkData) => {
+  checkIDs = []
+  checkData.checks.forEach((check) => {
+    checkIDs.push(check.id)
+  })
+  return Promise.map(checkIDs, (checkID) => {
+    return getCheckResults(checkID)
+  })
+}
+
+const writeCheckResults = (checkResults) => {
+  console.log(checkResults[0])
+}
+
 const getSummaryAverage = (checkID) => {
   options.uri = `${apiBaseUrl}/summary.average/${checkID}`
 	return rp(options)
@@ -178,6 +192,10 @@ module.exports = {
     getChecks()
     .then((checkData) =>{
       writeChecks(checkData)
+      getAllCheckResults(checkData)
+      .then((checkResultData) => {
+        writeCheckResults(checkResultData)
+      })
     })
     getTeams()
     .then((teamData) => {
