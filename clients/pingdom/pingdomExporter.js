@@ -35,8 +35,12 @@ const writeTeams = (teamData) => {
 }
 
 const getActions = () => {
-  options.uri = `${apiBaseUrl}`
+  options.uri = `${apiBaseUrl}/actions`
 	return rp(options)
+}
+
+const writeActions = (actionsData) => {
+  console.log(actionsData)
 }
 
 const getChecks = () => {
@@ -69,6 +73,18 @@ const getMaintenanceWindows = () => {
 const getProbes = () => {
   options.uri = `${apiBaseUrl}/probes`
 	return rp(options)
+}
+
+const writeProbes = (probeData) => {
+  const rows = []
+  let columnNames
+  let values
+  probeData.probes.forEach((probe) => {
+    columnNames = Object.keys(probe)
+    values = Object.values(probe)
+    rows.push(values)
+  })
+  write(columnNames, rows, 'probes')
 }
 
 const getReferences = () => {
@@ -163,6 +179,14 @@ module.exports = {
     getTeams()
     .then((teamData) => {
       writeTeams(teamData)
+    })
+    getActions()
+    .then((actionData) => {
+      writeActions(actionData)
+    })
+    getProbes()
+    .then((probeData) => {
+      writeProbes(probeData)
     })
   }
 }
