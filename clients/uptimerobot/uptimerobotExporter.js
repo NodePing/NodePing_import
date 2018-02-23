@@ -10,12 +10,44 @@ const options = {
   json: true
 }
 
+const getMonitors = (credentials) => {
+  options.uri = `${apiBaseUrl}/getMonitors`
+  options.body = {
+    api_key: credentials.token
+  }
+  return rp(options)
+}
+
+const writeMonitors = (data) => {
+  const rows = []
+  let columnNames
+  let values
+  data.monitors.forEach((monitor) => {
+    columnNames = Object.keys(monitor)
+    values = Object.values(monitor)
+    rows.push(values)
+  })
+  write(columnNames, rows, 'monitors')
+}
+
 const getMWindows = (credentials) => {
   options.uri = `${apiBaseUrl}/getMWindows`
   options.body = {
     api_key: credentials.token
   }
   return rp(options)
+}
+
+const writeMWindows = (data) => {
+  const rows = []
+  let columnNames
+  let values
+  data.mwindows.forEach((mwindow) => {
+    columnNames = Object.keys(mwindow)
+    values = Object.values(mwindow)
+    rows.push(values)
+  })
+  write(columnNames, rows, 'mwindows')
 }
 
 const getPSPs = (credentials) => {
@@ -34,12 +66,16 @@ const getAlertContacts = (credentials) => {
   return rp(options)
 }
 
-const getMonitors = (credentials) => {
-  options.uri = `${apiBaseUrl}/getMonitors`
-  options.body = {
-    api_key: credentials.token
-  }
-  return rp(options)
+const writeContacts = (data) => {
+  const rows = []
+  let columnNames
+  let values
+  data.alert_contacts.forEach((contact) => {
+    columnNames = Object.keys(contact)
+    values = Object.values(contact)
+    rows.push(values)
+  })
+  write(columnNames, rows, 'contacts')
 }
 
 const getAccountDetails = (credentials) => {
@@ -48,6 +84,16 @@ const getAccountDetails = (credentials) => {
     api_key: credentials.token
   }
   return rp(options)
+}
+
+const writeAccountDetails = (data) => {
+  const rows = []
+  const account = data.account
+  const columnNames = Object.keys(account)
+  const values = Object.values(account)
+  rows.push(values)
+
+  write(columnNames, rows, 'accountDetails')
 }
 
 const write = (columnNames, rows, entityName) => {
@@ -59,21 +105,25 @@ const write = (columnNames, rows, entityName) => {
   writer.end()
 }
 
-const transformMonitorData = (data) => {
-  rows = []
-  data.monitors.forEach((monitor) => {
-    columnNames = Object.keys(monitor)
-    values = Object.values(monitor)
-    rows.push(values)
-  })
-  write(columnNames, rows, 'monitors')
-}
+
 
 module.exports = {
   export: function(credentials) {
     getMonitors(credentials)
     .then((data) => {
-      monitors = transformMonitorData(data)
+      writeMonitors(data)
+    })
+    getMWindows(credentials)
+    .then((data) => {
+      writeMWindows(data)
+    })
+    getAlertContacts(credentials)
+    .then((data) => {
+      writeContacts(data)
+    })
+    getAccountDetails(credentials)
+    .then((data) => {
+      writeAccountDetails(data)
     })
   }
 }
