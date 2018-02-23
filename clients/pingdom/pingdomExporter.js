@@ -40,7 +40,7 @@ const getActions = () => {
 }
 
 const writeActions = (actionsData) => {
-  console.log(actionsData)
+  //console.log(actionsData)
 }
 
 const getChecks = () => {
@@ -107,14 +107,17 @@ const getSharedReports = () => {
 	return rp(options)
 }
 
-const getServerTime = () => {
-  options.uri = `${apiBaseUrl}/servertime`
-	return rp(options)
-}
-
 const getSettings = () => {
   options.uri = `${apiBaseUrl}/settings`
 	return rp(options)
+}
+
+const writeSettings = (settingsData) => {
+  const rows = []
+  const columnNames = Object.keys(settingsData.settings)
+  const values = Object.values(settingsData.settings)
+  rows.push(values)
+  write(columnNames, rows, 'settings')
 }
 
 const getCheckResults = (checkID) => {
@@ -187,6 +190,10 @@ module.exports = {
     getProbes()
     .then((probeData) => {
       writeProbes(probeData)
+    })
+    getSettings()
+    .then((settingsData) => {
+      writeSettings(settingsData)
     })
   }
 }
