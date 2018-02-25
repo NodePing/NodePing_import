@@ -272,6 +272,32 @@ const getOutages = (checkID) => {
 	return rp(options)
 }
 
+const getAllOutages = (checkData) => {
+  const checkIDs = []
+  checkData.checks.forEach((check) => {
+    checkIDs.push(check.id)
+  })
+  return Promise.map(checkIDs, (checkID) => {
+    return getOutages(checkID)
+    .then((outageData) => {
+      writeOutages(checkID, outageData)
+    })
+  })
+}
+
+const writeOutages = (checkID, outageData) => {
+  const rows = []
+  let values, columnNames
+  outageData.summary.states.forEach((state) => {
+    columnNames = Object.keys(state)
+    columnNames.unshift('checkID')
+    values = Object.values(state)
+    values.unshift(checkID)
+    rows.push(values)
+  })
+  write(columnNames, rows, 'outageData')
+}
+
 const getPerformanceSummary = (checkID) => {
   options.uri = `${apiBaseUrl}/summary.performance/${checkID}`
 	return rp(options)
@@ -313,6 +339,7 @@ module.exports = {
       getAllCheckResults(checkData)
       getAllSummaryAverages(checkData)
       getAllSummaryHourlys(checkData)
+      getAllOutages(checkData)
     })
     getTeams()
     .then((teamData) => {
