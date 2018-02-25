@@ -329,8 +329,31 @@ const writePerformanceData = (checkID, performanceData) => {
 }
 
 const getProbeSummary = (checkID) => {
-  options.uri = `${apiBaseUrl}/summary.probes/${checkID}`
+  options.uri = `${apiBaseUrl}/summary.probes/${checkID}?from=0`
 	return rp(options)
+}
+
+const getAllProbeSummaries = (checkData) => {
+  const checkIDs = []
+  checkData.checks.forEach((check) => {
+    checkIDs.push(check.id)
+  })
+  return Promise.map(checkIDs, (checkID) => {
+    return getProbeSummary(checkID)
+    .then((probeData) => {
+      writeProbeSummaries(checkID, probeData)
+    })
+  })
+}
+
+const writeProbeSummaries = (checkID, probeData) => {
+  const columnNames = ['probes']
+  const rows = []
+  let values
+  probeData.probes.forEach((probe) => {
+    rows.push([probe])
+  })
+  write(columnNames, rows, 'probeSummaries')
 }
 
 const getAnalysis = (checkID) => {
@@ -366,6 +389,7 @@ module.exports = {
       getAllSummaryHourlys(checkData)
       getAllOutages(checkData)
       getAllPerformanceSummarys(checkData)
+      getAllProbeSummaries(checkData)
     })
     getTeams()
     .then((teamData) => {
