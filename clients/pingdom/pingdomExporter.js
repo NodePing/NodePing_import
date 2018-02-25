@@ -39,6 +39,8 @@ const getActions = () => {
 }
 
 const writeActions = (actionsData) => {
+  //TODO:
+  // Generate actions data to test with
   //console.log(actionsData)
 }
 
@@ -241,6 +243,30 @@ const getSummaryHourly = (checkID) => {
 	return rp(options)
 }
 
+const getAllSummaryHourlys = (checkData) => {
+  const checkIDs = []
+  checkData.checks.forEach((check) => {
+    checkIDs.push(check.id)
+  })
+  return Promise.map(checkIDs, (checkID) => {
+    return getSummaryHourly(checkID)
+    .then((summaryHourly) => {
+      writeSummaryHourly(checkID, summaryHourly)
+    })
+  })
+}
+
+const writeSummaryHourly = (checkID, summaryHourly) => {
+  const columnNames = ['checkID', 'hour', 'avgResponseTime']
+  const rows = []
+  let values
+  summaryHourly.hoursofday.forEach((hourSummary) => {
+    values = [checkID, hourSummary.hour, hourSummary.avgresponse]
+    rows.push(values)
+  })
+  write(columnNames, rows, 'hourlySummary')
+}
+
 const getOutages = (checkID) => {
   options.uri = `${apiBaseUrl}/summary.outage/${checkID}`
 	return rp(options)
@@ -286,6 +312,7 @@ module.exports = {
       writeChecks(checkData)
       getAllCheckResults(checkData)
       getAllSummaryAverages(checkData)
+      getAllSummaryHourlys(checkData)
     })
     getTeams()
     .then((teamData) => {
