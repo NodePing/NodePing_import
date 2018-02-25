@@ -17,10 +17,9 @@ const getTeams = () => {
 
 const writeTeams = (teamData) => {
   const rows = []
-  let columnNames
-  let values
+  const columnNames = ['teamID', 'teamName', 'userID', 'userName', 'userEmail']
+  let values, teamID, teamName, teamUsers, userID, userName, userEmail
   teamData.teams.forEach((team) => {
-    columnNames = ['teamID', 'teamName', 'userID', 'userName', 'userEmail']
     teamID = team.id
     teamName = team.name
     teamUsers = team.users
@@ -202,6 +201,28 @@ const getSummaryAverage = (checkID) => {
 	return rp(options)
 }
 
+const getAllSummaryAverages = (checkData) => {
+  const checkIDs = []
+  checkData.checks.forEach((check) => {
+    checkIDs.push(check.id)
+  })
+  return Promise.map(checkIDs, (checkID) => {
+    return getSummaryAverage(checkID)
+    .then((summaryAverage) => {
+      writeSummaryAverage(checkID, summaryAverage)
+    })
+  })
+}
+
+const writeSummaryAverage = (checkID, summaryAverage) => {
+  const columnNames = ['checkID', 'avgResponse', 'from', 'to']
+  const avgResponse = summaryAverage.summary.responsetime.avgresponse
+  const from = summaryAverage.summary.responsetime.from
+  const to = summaryAverage.summary.responsetime.to
+  const rows = [[checkID, avgResponse, from, to]]
+  write(columnNames, rows, 'summaryAverages')
+}
+
 const getSummaryHourly = (checkID) => {
   options.uri = `${apiBaseUrl}/summary.hoursofday/${checkID}`
 	return rp(options)
@@ -237,7 +258,7 @@ const authHeader = (credentials) => {
 
 const write = (columnNames, rows, entityName) => {
   var writer = csvWriter({ headers: columnNames})
-  writer.pipe(fs.createWriteStream(`${entityName}.csv`))
+  writer.pipe(fs.createWriteStream(`${entityName}.csv`, {flags: 'a'}))
   rows.forEach((row) => {
     writer.write(row)
   })
@@ -254,6 +275,7 @@ module.exports = {
       .then((checkResultData) => {
         writeCheckResults(checkResultData)
       })
+      getAllSummaryAverages(checkData)
     })
     getTeams()
     .then((teamData) => {
