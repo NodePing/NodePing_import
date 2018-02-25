@@ -132,6 +132,18 @@ const getEmailReports = () => {
 	return rp(options)
 }
 
+const writeEmailReports = (emailReportData) => {
+  const rows = []
+  let columnNames
+  let values
+  emailReportData.subscriptions.forEach((report) => {
+    columnNames = Object.keys(report)
+    values = Object.values(report)
+    rows.push(values)
+  })
+  write(columnNames, rows, 'emailReports')
+}
+
 const getPublicReports = () => {
   options.uri = `${apiBaseUrl}/reports.public`
 	return rp(options)
@@ -255,6 +267,10 @@ module.exports = {
     getCredits()
     .then((creditData) => {
       writeCredits(creditData)
+    })
+    getEmailReports()
+    .then((emailReportData) => {
+      writeEmailReports(emailReportData)
     })
   }
 }
