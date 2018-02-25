@@ -70,6 +70,25 @@ const getMaintenanceWindows = () => {
 	return rp(options)
 }
 
+const writeWindows = (windowsData) => {
+  const rows = []
+  let columnNames = ['WindowID', 'desc', 'from', 'to', 'recurrencytype', 'repeatevery', 'effectiveto', 'checkID']
+  let id, desc, from, to, recurType, repeat, effectTo
+  windowsData.maintenance.forEach((mWindow) => {
+    id = mWindow.id
+    desc = mWindow.description
+    from = mWindow.from
+    to = mWindow.to
+    recurType = mWindow.recurrencetype
+    repeat = mWindow.repeatevery
+    effectTo = mWindow.effectiveto
+    mWindow.checks.uptime.forEach((check) => {
+      rows.push([id, desc, from, to, recurType, repeat, effectTo, check])
+    })
+  })
+  write(columnNames, rows, 'MaintenanceWindows')
+}
+
 const getProbes = () => {
   options.uri = `${apiBaseUrl}/probes`
 	return rp(options)
@@ -136,7 +155,7 @@ const getAllCheckResults = (checkData) => {
 }
 
 const writeCheckResults = (checkResults) => {
-  console.log(checkResults[0])
+  //console.log(checkResults[0])
 }
 
 const getSummaryAverage = (checkID) => {
@@ -212,6 +231,10 @@ module.exports = {
     getSettings()
     .then((settingsData) => {
       writeSettings(settingsData)
+    })
+    getMaintenanceWindows()
+    .then((windowsData) => {
+      writeWindows(windowsData)
     })
   }
 }
