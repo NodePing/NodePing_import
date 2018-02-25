@@ -303,6 +303,31 @@ const getPerformanceSummary = (checkID) => {
 	return rp(options)
 }
 
+const getAllPerformanceSummarys = (checkData) => {
+  const checkIDs = []
+  checkData.checks.forEach((check) => {
+    checkIDs.push(check.id)
+  })
+  return Promise.map(checkIDs, (checkID) => {
+    return getPerformanceSummary(checkID)
+    .then((performanceData) => {
+      writePerformanceData(checkID, performanceData)
+    })
+  })
+}
+
+const writePerformanceData = (checkID, performanceData) => {
+  const columnNames = ['CheckID', 'avgresponse', 'starttime']
+  const rows = []
+  let values, avgresponse, starttime
+  performanceData.summary.hours.forEach((hour) => {
+    avgresponse = hour.avgresponse
+    starttime = hour.starttime
+    rows.push([checkID, avgresponse, starttime])
+  })
+  write(columnNames, rows, 'performanceData')
+}
+
 const getProbeSummary = (checkID) => {
   options.uri = `${apiBaseUrl}/summary.probes/${checkID}`
 	return rp(options)
@@ -340,6 +365,7 @@ module.exports = {
       getAllSummaryAverages(checkData)
       getAllSummaryHourlys(checkData)
       getAllOutages(checkData)
+      getAllPerformanceSummarys(checkData)
     })
     getTeams()
     .then((teamData) => {
