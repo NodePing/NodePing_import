@@ -149,6 +149,17 @@ const getPublicReports = () => {
 	return rp(options)
 }
 
+const writePublicReports = (publicReportData) => {
+  const rows = []
+  let columnNames
+  let values
+  publicReportData.public.forEach((report) => {
+    columnNames = Object.keys(report)
+    values = Object.values(report)
+    rows.push(values)
+  })
+  write(columnNames, rows, 'publicReports')}
+
 const getSharedReports = () => {
   options.uri = `${apiBaseUrl}/reports.shared`
 	return rp(options)
@@ -271,6 +282,10 @@ module.exports = {
     getEmailReports()
     .then((emailReportData) => {
       writeEmailReports(emailReportData)
+    })
+    getPublicReports()
+    .then((publicReportData) => {
+      writePublicReports(publicReportData)
     })
   }
 }
