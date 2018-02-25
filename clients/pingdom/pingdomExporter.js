@@ -65,6 +65,22 @@ const getCredits = () => {
 	return rp(options)
 }
 
+const writeCredits = (creditData) => {
+  const credits = creditData.credits
+  const rows = []
+  const values = []
+  const columnNames = []
+  for (keyName in credits) {
+    let value = credits[keyName]
+    if (value) {
+      columnNames.push(keyName)
+      values.push(value)
+    }
+  }
+  rows.push(values)
+  write(columnNames, rows, 'credits')
+}
+
 const getMaintenanceWindows = () => {
   options.uri = `${apiBaseUrl}/maintenance`
 	return rp(options)
@@ -235,6 +251,10 @@ module.exports = {
     getMaintenanceWindows()
     .then((windowsData) => {
       writeWindows(windowsData)
+    })
+    getCredits()
+    .then((creditData) => {
+      writeCredits(creditData)
     })
   }
 }
