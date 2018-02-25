@@ -189,11 +189,24 @@ const getAllCheckResults = (checkData) => {
   })
   return Promise.map(checkIDs, (checkID) => {
     return getCheckResults(checkID)
+    .then((checkResults) => {
+      writeCheckResults(checkID, checkResults)
+    })
   })
 }
 
-const writeCheckResults = (checkResults) => {
-  //console.log(checkResults[0])
+const writeCheckResults = (checkID, checkResults) => {
+  const rows = []
+  let values, columnNames
+
+  checkResults.results.forEach((result) => {
+    columnNames = Object.keys(result)
+    columnNames.unshift('CheckID')
+    values = Object.values(result)
+    values.unshift(checkID)
+    rows.push(values)
+  })
+  write(columnNames, rows, 'CheckResults')
 }
 
 const getSummaryAverage = (checkID) => {
@@ -272,9 +285,6 @@ module.exports = {
     .then((checkData) =>{
       writeChecks(checkData)
       getAllCheckResults(checkData)
-      .then((checkResultData) => {
-        writeCheckResults(checkResultData)
-      })
       getAllSummaryAverages(checkData)
     })
     getTeams()
