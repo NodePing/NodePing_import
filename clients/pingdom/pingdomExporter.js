@@ -184,11 +184,7 @@ const getCheckResults = (checkID) => {
 	return rp(options)
 }
 
-const writeAllCheckResults = (checkData) => {
-  checkIDs = []
-  checkData.checks.forEach((check) => {
-    checkIDs.push(check.id)
-  })
+const writeAllCheckResults = (checkIDs) => {
   return Promise.map(checkIDs, (checkID) => {
     return getCheckResults(checkID)
     .then((checkResults) => {
@@ -216,11 +212,7 @@ const getSummaryAverage = (checkID) => {
 	return rp(options)
 }
 
-const writeAllSummaryAverages = (checkData) => {
-  const checkIDs = []
-  checkData.checks.forEach((check) => {
-    checkIDs.push(check.id)
-  })
+const writeAllSummaryAverages = (checkIDs) => {
   return Promise.map(checkIDs, (checkID) => {
     return getSummaryAverage(checkID)
     .then((summaryAverage) => {
@@ -243,11 +235,7 @@ const getSummaryHourly = (checkID) => {
 	return rp(options)
 }
 
-const writeAllSummaryHourlies = (checkData) => {
-  const checkIDs = []
-  checkData.checks.forEach((check) => {
-    checkIDs.push(check.id)
-  })
+const writeAllSummaryHourlies = (checkIDs) => {
   return Promise.map(checkIDs, (checkID) => {
     return getSummaryHourly(checkID)
     .then((summaryHourly) => {
@@ -264,7 +252,7 @@ const writeSummaryHourly = (checkID, summaryHourly) => {
     values = [checkID, hourSummary.hour, hourSummary.avgresponse]
     rows.push(values)
   })
-  write(columnNames, rows, 'Hourliesummary')
+  write(columnNames, rows, 'HourlySummary')
 }
 
 const getOutages = (checkID) => {
@@ -272,11 +260,7 @@ const getOutages = (checkID) => {
 	return rp(options)
 }
 
-const writeAllOutages = (checkData) => {
-  const checkIDs = []
-  checkData.checks.forEach((check) => {
-    checkIDs.push(check.id)
-  })
+const writeAllOutages = (checkIDs) => {
   return Promise.map(checkIDs, (checkID) => {
     return getOutages(checkID)
     .then((outageData) => {
@@ -303,11 +287,7 @@ const getPerformanceSummary = (checkID) => {
 	return rp(options)
 }
 
-const writeAllPerformanceSummaries = (checkData) => {
-  const checkIDs = []
-  checkData.checks.forEach((check) => {
-    checkIDs.push(check.id)
-  })
+const writeAllPerformanceSummaries = (checkIDs) => {
   return Promise.map(checkIDs, (checkID) => {
     return getPerformanceSummary(checkID)
     .then((performanceData) => {
@@ -333,11 +313,7 @@ const getProbeSummary = (checkID) => {
 	return rp(options)
 }
 
-const writeAllProbeSummaries = (checkData) => {
-  const checkIDs = []
-  checkData.checks.forEach((check) => {
-    checkIDs.push(check.id)
-  })
+const writeAllProbeSummaries = (checkIDs) => {
   return Promise.map(checkIDs, (checkID) => {
     return getProbeSummary(checkID)
     .then((probeData) => {
@@ -361,11 +337,7 @@ const getAnalysis = (checkID) => {
 	return rp(options)
 }
 
-const writeAllAnalyses = (checkData) => {
-  const checkIDs = []
-  checkData.checks.forEach((check) => {
-    checkIDs.push(check.id)
-  })
+const writeAllAnalyses = (checkIDs) => {
   return Promise.map(checkIDs, (checkID) => {
     return getAnalysis(checkID)
     .then((analysisData) => {
@@ -411,13 +383,19 @@ module.exports = {
     getChecks()
     .then((checkData) =>{
       writeChecks(checkData)
-      writeAllCheckResults(checkData)
-      writeAllSummaryAverages(checkData)
-      writeAllSummaryHourlies(checkData)
-      writeAllOutages(checkData)
-      writeAllPerformanceSummaries(checkData)
-      writeAllProbeSummaries(checkData)
-      writeAllAnalyses(checkData)
+
+      const checkIDs = []
+      checkData.checks.forEach((check) => {
+        checkIDs.push(check.id)
+      })
+
+      writeAllCheckResults(checkIDs)
+      writeAllSummaryAverages(checkIDs)
+      writeAllSummaryHourlies(checkIDs)
+      writeAllOutages(checkIDs)
+      writeAllPerformanceSummaries(checkIDs)
+      writeAllProbeSummaries(checkIDs)
+      writeAllAnalyses(checkIDs)
     })
     getTeams()
     .then((teamData) => {
