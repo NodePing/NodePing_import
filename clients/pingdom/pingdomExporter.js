@@ -357,8 +357,35 @@ const writeProbeSummaries = (checkID, probeData) => {
 }
 
 const getAnalysis = (checkID) => {
-  options.uri = `${apiBaseUrl}/analysis/${checkid}`
+  options.uri = `${apiBaseUrl}/analysis/${checkID}`
 	return rp(options)
+}
+
+const getAllAnalyses = (checkData) => {
+  const checkIDs = []
+  checkData.checks.forEach((check) => {
+    checkIDs.push(check.id)
+  })
+  return Promise.map(checkIDs, (checkID) => {
+    return getAnalysis(checkID)
+    .then((analysisData) => {
+      writeAnalysisData(checkID, analysisData)
+    })
+  })
+}
+
+const writeAnalysisData = (checkID, analysisData) => {
+  const rows = []
+  let values, columnNames
+
+  analysisData.analysis.forEach((analysisResult) => {
+    columnNames = Object.keys(analysisResult)
+    columnNames.unshift('CheckID')
+    values = Object.values(analysisResult)
+    values.unshift(checkID)
+    rows.push(values)
+  })
+  write(columnNames, rows, 'AnalysisResults')
 }
 
 const authHeader = (credentials) => {
@@ -390,6 +417,7 @@ module.exports = {
       getAllOutages(checkData)
       getAllPerformanceSummarys(checkData)
       getAllProbeSummaries(checkData)
+      getAllAnalyses(checkData)
     })
     getTeams()
     .then((teamData) => {
