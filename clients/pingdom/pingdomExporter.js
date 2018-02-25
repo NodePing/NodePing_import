@@ -398,36 +398,20 @@ module.exports = {
       writeAllAnalyses(checkIDs)
     })
     getTeams()
-    .then((teamData) => {
-      writeTeams(teamData)
-    })
+    .then((teamData) => writeTeams(teamData))
     getActions()
-    .then((actionData) => {
-      writeActions(actionData)
-    })
+    .then((actionData) => writeActions(actionData))
     getProbes()
-    .then((probeData) => {
-      writeProbes(probeData)
-    })
+    .then((probeData) => writeProbes(probeData))
     getSettings()
-    .then((settingsData) => {
-      writeSettings(settingsData)
-    })
+    .then((settingsData) => writeSettings(settingsData))
     getMaintenanceWindows()
-    .then((windowsData) => {
-      writeWindows(windowsData)
-    })
+    .then((windowsData) => writeWindows(windowsData))
     getCredits()
-    .then((creditData) => {
-      writeCredits(creditData)
-    })
+    .then((creditData) => writeCredits(creditData))
     getEmailReports()
-    .then((emailReportData) => {
-      writeEmailReports(emailReportData)
-    })
+    .then((emailReportData) => writeEmailReports(emailReportData))
     getPublicReports()
-    .then((publicReportData) => {
-      writePublicReports(publicReportData)
-    })
+    .then((publicReportData) => writePublicReports(publicReportData))
   }
 }
