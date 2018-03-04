@@ -10,32 +10,44 @@ const options = {
   json: true
 }
 
+const logError = (error, endpointName) => {
+  console.log(`Error when checking for ${endpointName}: ${error.error.message}`)
+}
+
 const getTeams = () => {
   options.uri = `${apiBaseUrl}/teams`
 	return rp(options)
+  .catch((err) => {
+    logError(err, 'Teams')
+  })
 }
 
 const writeTeams = (teamData) => {
-  const rows = []
-  const columnNames = ['teamID', 'teamName', 'userID', 'userName', 'userEmail']
-  let values, teamID, teamName, teamUsers, userID, userName, userEmail
-  teamData.teams.forEach((team) => {
-    teamID = team.id
-    teamName = team.name
-    teamUsers = team.users
-    teamUsers.forEach((teamUser) => {
-      userID = teamUser.id
-      userName = teamUser.name
-      userEmail = teamUser.email
-      rows.push([teamID, teamName, userID, userName, userEmail])
+  if (teamData) {
+    const rows = []
+    const columnNames = ['teamID', 'teamName', 'userID', 'userName', 'userEmail']
+    let values, teamID, teamName, teamUsers, userID, userName, userEmail
+    teamData.teams.forEach((team) => {
+      teamID = team.id
+      teamName = team.name
+      teamUsers = team.users
+      teamUsers.forEach((teamUser) => {
+        userID = teamUser.id
+        userName = teamUser.name
+        userEmail = teamUser.email
+        rows.push([teamID, teamName, userID, userName, userEmail])
+      })
     })
-  })
-  write(columnNames, rows, 'teams')
+    write(columnNames, rows, 'teams')
+  }
 }
 
 const getActions = () => {
   options.uri = `${apiBaseUrl}/actions`
 	return rp(options)
+  .catch((err) => {
+    logError(err, 'Actions')
+  })
 }
 
 const writeActions = (actionsData) => {
@@ -47,317 +59,408 @@ const writeActions = (actionsData) => {
 const getChecks = () => {
   options.uri = `${apiBaseUrl}/checks`
 	return rp(options)
+  .catch((err) => {
+    logError(err, 'Checks')
+  })
 }
 
 const writeChecks = (checkData) => {
-  const rows = []
-  let columnNames
-  let values
-  checkData.checks.forEach((check) => {
-    columnNames = Object.keys(check)
-    values = Object.values(check)
-    rows.push(values)
-  })
-  write(columnNames, rows, 'checks')
+  if (checkData) {
+    const rows = []
+    let columnNames
+    let values
+    checkData.checks.forEach((check) => {
+      columnNames = Object.keys(check)
+      values = Object.values(check)
+      rows.push(values)
+    })
+    write(columnNames, rows, 'checks')
+  }
 }
 
 const getCredits = () => {
   options.uri = `${apiBaseUrl}/credits`
 	return rp(options)
+  .catch((err) => {
+    logError(err, 'Credits')
+  })
 }
 
 const writeCredits = (creditData) => {
-  const credits = creditData.credits
-  const rows = []
-  const values = []
-  const columnNames = []
-  for (keyName in credits) {
-    let value = credits[keyName]
-    if (value) {
-      columnNames.push(keyName)
-      values.push(value)
+  if (creditData) {
+    const credits = creditData.credits
+    const rows = []
+    const values = []
+    const columnNames = []
+    for (keyName in credits) {
+      let value = credits[keyName]
+      if (value) {
+        columnNames.push(keyName)
+        values.push(value)
+      }
     }
+    rows.push(values)
+    write(columnNames, rows, 'credits')
   }
-  rows.push(values)
-  write(columnNames, rows, 'credits')
 }
 
 const getMaintenanceWindows = () => {
   options.uri = `${apiBaseUrl}/maintenance`
 	return rp(options)
+  .catch((err) => {
+    logError(err, 'MaintenanceWindows')
+  })
 }
 
 const writeWindows = (windowsData) => {
-  const rows = []
-  let columnNames = ['WindowID', 'desc', 'from', 'to', 'recurrencytype', 'repeatevery', 'effectiveto', 'checkID']
-  let id, desc, from, to, recurType, repeat, effectTo
-  windowsData.maintenance.forEach((mWindow) => {
-    id = mWindow.id
-    desc = mWindow.description
-    from = mWindow.from
-    to = mWindow.to
-    recurType = mWindow.recurrencetype
-    repeat = mWindow.repeatevery
-    effectTo = mWindow.effectiveto
-    mWindow.checks.uptime.forEach((check) => {
-      rows.push([id, desc, from, to, recurType, repeat, effectTo, check])
+  if (windowsData) {
+    const rows = []
+    let columnNames = ['WindowID', 'desc', 'from', 'to', 'recurrencytype', 'repeatevery', 'effectiveto', 'checkID']
+    let id, desc, from, to, recurType, repeat, effectTo
+    windowsData.maintenance.forEach((mWindow) => {
+      id = mWindow.id
+      desc = mWindow.description
+      from = mWindow.from
+      to = mWindow.to
+      recurType = mWindow.recurrencetype
+      repeat = mWindow.repeatevery
+      effectTo = mWindow.effectiveto
+      mWindow.checks.uptime.forEach((check) => {
+        rows.push([id, desc, from, to, recurType, repeat, effectTo, check])
+      })
     })
-  })
-  write(columnNames, rows, 'MaintenanceWindows')
+    write(columnNames, rows, 'MaintenanceWindows')
+    }
 }
 
 const getProbes = () => {
   options.uri = `${apiBaseUrl}/probes`
 	return rp(options)
+  .catch((err) => {
+    logError(err, 'probes')
+  })
 }
 
 const writeProbes = (probeData) => {
-  const rows = []
-  let columnNames
-  let values
-  probeData.probes.forEach((probe) => {
-    columnNames = Object.keys(probe)
-    values = Object.values(probe)
-    rows.push(values)
-  })
-  write(columnNames, rows, 'probes')
+  if (probeData) {
+    const rows = []
+    let columnNames
+    let values
+    probeData.probes.forEach((probe) => {
+      columnNames = Object.keys(probe)
+      values = Object.values(probe)
+      rows.push(values)
+    })
+    write(columnNames, rows, 'probes')
+  }
 }
 
 const getReferences = () => {
   options.uri = `${apiBaseUrl}/reference`
 	return rp(options)
+  .catch((err) => {
+    logError(err, 'reference')
+  })
 }
 
 const getEmailReports = () => {
   options.uri = `${apiBaseUrl}/reports.email`
 	return rp(options)
+  .catch((err) => {
+    logError(err, 'reports.email')
+  })
 }
 
 const writeEmailReports = (emailReportData) => {
-  const rows = []
-  let columnNames
-  let values
-  emailReportData.subscriptions.forEach((report) => {
-    columnNames = Object.keys(report)
-    values = Object.values(report)
-    rows.push(values)
-  })
-  write(columnNames, rows, 'emailReports')
+  if (emailReportData) {
+    const rows = []
+    let columnNames
+    let values
+    emailReportData.subscriptions.forEach((report) => {
+      columnNames = Object.keys(report)
+      values = Object.values(report)
+      rows.push(values)
+    })
+    write(columnNames, rows, 'emailReports')
+  }
 }
 
 const getPublicReports = () => {
   options.uri = `${apiBaseUrl}/reports.public`
 	return rp(options)
+  .catch((err) => {
+    logError(err, 'reports.public')
+  })
 }
 
 const writePublicReports = (publicReportData) => {
-  const rows = []
-  let columnNames
-  let values
-  publicReportData.public.forEach((report) => {
-    columnNames = Object.keys(report)
-    values = Object.values(report)
-    rows.push(values)
-  })
-  write(columnNames, rows, 'publicReports')}
+  if (publicReportData) {
+    const rows = []
+    let columnNames
+    let values
+    publicReportData.public.forEach((report) => {
+      columnNames = Object.keys(report)
+      values = Object.values(report)
+      rows.push(values)
+    })
+    write(columnNames, rows, 'publicReports')
+  }
+}
 
 const getSharedReports = () => {
   options.uri = `${apiBaseUrl}/reports.shared`
 	return rp(options)
+  .catch((err) => {
+    logError(err, 'reports.shared')
+  })
 }
 
 const getSettings = () => {
   options.uri = `${apiBaseUrl}/settings`
 	return rp(options)
+  .catch((err) => {
+    logError(err, 'settings')
+  })
 }
 
 const writeSettings = (settingsData) => {
-  const rows = []
-  const columnNames = Object.keys(settingsData.settings)
-  const values = Object.values(settingsData.settings)
-  rows.push(values)
-  write(columnNames, rows, 'settings')
+  if (settingsData) {
+    const rows = []
+    const columnNames = Object.keys(settingsData.settings)
+    const values = Object.values(settingsData.settings)
+    rows.push(values)
+    write(columnNames, rows, 'settings')
+  }
 }
 
 const getCheckResults = (checkID) => {
   options.uri = `${apiBaseUrl}/results/${checkID}`
 	return rp(options)
+  .catch((err) => {
+    logError(err, `results/${checkID}`)
+  })
 }
 
 const writeAllCheckResults = (checkIDs) => {
-  return Promise.map(checkIDs, (checkID) => {
-    return getCheckResults(checkID)
-    .then((checkResults) => {
-      writeCheckResults(checkID, checkResults)
+  if (checkIDs) {
+    return Promise.map(checkIDs, (checkID) => {
+      return getCheckResults(checkID)
+      .then((checkResults) => {
+        writeCheckResults(checkID, checkResults)
+      })
     })
-  })
+  }
 }
 
 const writeCheckResults = (checkID, checkResults) => {
-  const rows = []
-  let values, columnNames
+  if (checkResults) {
+    const rows = []
+    let values, columnNames
 
-  checkResults.results.forEach((result) => {
-    columnNames = Object.keys(result)
-    columnNames.unshift('CheckID')
-    values = Object.values(result)
-    values.unshift(checkID)
-    rows.push(values)
-  })
-  write(columnNames, rows, 'CheckResults')
+    checkResults.results.forEach((result) => {
+      columnNames = Object.keys(result)
+      columnNames.unshift('CheckID')
+      values = Object.values(result)
+      values.unshift(checkID)
+      rows.push(values)
+    })
+    write(columnNames, rows, 'CheckResults')
+  }
 }
 
 const getSummaryAverage = (checkID) => {
   options.uri = `${apiBaseUrl}/summary.average/${checkID}`
 	return rp(options)
-}
-
-const writeAllSummaryAverages = (checkIDs) => {
-  return Promise.map(checkIDs, (checkID) => {
-    return getSummaryAverage(checkID)
-    .then((summaryAverage) => {
-      writeSummaryAverage(checkID, summaryAverage)
-    })
+  .catch((err) => {
+    logError(err, `summary.average/${checkID}`)
   })
 }
 
+const writeAllSummaryAverages = (checkIDs) => {
+  if (checkIDs) {
+    return Promise.map(checkIDs, (checkID) => {
+      return getSummaryAverage(checkID)
+      .then((summaryAverage) => {
+        writeSummaryAverage(checkID, summaryAverage)
+      })
+    })
+  }
+}
+
 const writeSummaryAverage = (checkID, summaryAverage) => {
-  const columnNames = ['checkID', 'avgResponse', 'from', 'to']
-  const avgResponse = summaryAverage.summary.responsetime.avgresponse
-  const from = summaryAverage.summary.responsetime.from
-  const to = summaryAverage.summary.responsetime.to
-  const rows = [[checkID, avgResponse, from, to]]
-  write(columnNames, rows, 'summaryAverages')
+  if (summaryAverage) {
+    const columnNames = ['checkID', 'avgResponse', 'from', 'to']
+    const avgResponse = summaryAverage.summary.responsetime.avgresponse
+    const from = summaryAverage.summary.responsetime.from
+    const to = summaryAverage.summary.responsetime.to
+    const rows = [[checkID, avgResponse, from, to]]
+    write(columnNames, rows, 'summaryAverages')
+  }
 }
 
 const getSummaryHourly = (checkID) => {
   options.uri = `${apiBaseUrl}/summary.hoursofday/${checkID}`
 	return rp(options)
+  .catch((err) => {
+    logError(err, `summary.hoursofday/${checkID}`)
+  })
 }
 
 const writeAllSummaryHourlies = (checkIDs) => {
-  return Promise.map(checkIDs, (checkID) => {
-    return getSummaryHourly(checkID)
-    .then((summaryHourly) => {
-      writeSummaryHourly(checkID, summaryHourly)
+  if (checkIDs) {
+    return Promise.map(checkIDs, (checkID) => {
+      return getSummaryHourly(checkID)
+      .then((summaryHourly) => {
+        writeSummaryHourly(checkID, summaryHourly)
+      })
     })
-  })
+  }
 }
 
 const writeSummaryHourly = (checkID, summaryHourly) => {
-  const columnNames = ['checkID', 'hour', 'avgResponseTime']
-  const rows = []
-  let values
-  summaryHourly.hoursofday.forEach((hourSummary) => {
-    values = [checkID, hourSummary.hour, hourSummary.avgresponse]
-    rows.push(values)
-  })
-  write(columnNames, rows, 'HourlySummary')
+  if (summaryHourly) {
+    const columnNames = ['checkID', 'hour', 'avgResponseTime']
+    const rows = []
+    let values
+    summaryHourly.hoursofday.forEach((hourSummary) => {
+      values = [checkID, hourSummary.hour, hourSummary.avgresponse]
+      rows.push(values)
+    })
+    write(columnNames, rows, 'HourlySummary')
+  }
 }
 
 const getOutages = (checkID) => {
   options.uri = `${apiBaseUrl}/summary.outage/${checkID}`
 	return rp(options)
+  .catch((err) => {
+    logError(err, `summary.outage/${checkID}`)
+  })
 }
 
 const writeAllOutages = (checkIDs) => {
-  return Promise.map(checkIDs, (checkID) => {
-    return getOutages(checkID)
-    .then((outageData) => {
-      writeOutages(checkID, outageData)
+  if (checkIDs) {
+    return Promise.map(checkIDs, (checkID) => {
+      return getOutages(checkID)
+      .then((outageData) => {
+        writeOutages(checkID, outageData)
+      })
     })
-  })
+  }
 }
 
 const writeOutages = (checkID, outageData) => {
-  const rows = []
-  let values, columnNames
-  outageData.summary.states.forEach((state) => {
-    columnNames = Object.keys(state)
-    columnNames.unshift('checkID')
-    values = Object.values(state)
-    values.unshift(checkID)
-    rows.push(values)
-  })
-  write(columnNames, rows, 'outageData')
+  if (outageData) {
+    const rows = []
+    let values, columnNames
+    outageData.summary.states.forEach((state) => {
+      columnNames = Object.keys(state)
+      columnNames.unshift('checkID')
+      values = Object.values(state)
+      values.unshift(checkID)
+      rows.push(values)
+    })
+    write(columnNames, rows, 'outageData')
+  }
 }
 
 const getPerformanceSummary = (checkID) => {
   options.uri = `${apiBaseUrl}/summary.performance/${checkID}`
 	return rp(options)
+  .catch((err) => {
+    logError(err, `summary.performance/${checkID}`)
+  })
 }
 
 const writeAllPerformanceSummaries = (checkIDs) => {
-  return Promise.map(checkIDs, (checkID) => {
-    return getPerformanceSummary(checkID)
-    .then((performanceData) => {
-      writePerformanceData(checkID, performanceData)
+  if (checkIDs) {
+    return Promise.map(checkIDs, (checkID) => {
+      return getPerformanceSummary(checkID)
+      .then((performanceData) => {
+        writePerformanceData(checkID, performanceData)
+      })
     })
-  })
+  }
 }
 
 const writePerformanceData = (checkID, performanceData) => {
-  const columnNames = ['CheckID', 'avgresponse', 'starttime']
-  const rows = []
-  let values, avgresponse, starttime
-  performanceData.summary.hours.forEach((hour) => {
-    avgresponse = hour.avgresponse
-    starttime = hour.starttime
-    rows.push([checkID, avgresponse, starttime])
-  })
-  write(columnNames, rows, 'performanceData')
+  if (performanceData) {
+    const columnNames = ['CheckID', 'avgresponse', 'starttime']
+    const rows = []
+    let values, avgresponse, starttime
+    performanceData.summary.hours.forEach((hour) => {
+      avgresponse = hour.avgresponse
+      starttime = hour.starttime
+      rows.push([checkID, avgresponse, starttime])
+    })
+    write(columnNames, rows, 'performanceData')
+  }
 }
 
 const getProbeSummary = (checkID) => {
   options.uri = `${apiBaseUrl}/summary.probes/${checkID}?from=0`
 	return rp(options)
+  .catch((err) => {
+    logError(err, `summary.probes/{$checkID}`)
+  })
 }
 
 const writeAllProbeSummaries = (checkIDs) => {
-  return Promise.map(checkIDs, (checkID) => {
-    return getProbeSummary(checkID)
-    .then((probeData) => {
-      writeProbeSummaries(checkID, probeData)
+  if (checkIDs) {
+    return Promise.map(checkIDs, (checkID) => {
+      return getProbeSummary(checkID)
+      .then((probeData) => {
+        writeProbeSummaries(checkID, probeData)
+      })
     })
-  })
+  }
 }
 
 const writeProbeSummaries = (checkID, probeData) => {
-  const columnNames = ['probes']
-  const rows = []
-  let values
-  probeData.probes.forEach((probe) => {
-    rows.push([probe])
-  })
-  write(columnNames, rows, 'probeSummaries')
+  if (probeData) {
+    const columnNames = ['probes']
+    const rows = []
+    let values
+    probeData.probes.forEach((probe) => {
+      rows.push([probe])
+    })
+    write(columnNames, rows, 'probeSummaries')
+  }
 }
 
 const getAnalysis = (checkID) => {
   options.uri = `${apiBaseUrl}/analysis/${checkID}`
 	return rp(options)
+  .catch((err) => {
+    logError(err, `analysis/${checkID}`)
+  })
 }
 
 const writeAllAnalyses = (checkIDs) => {
-  return Promise.map(checkIDs, (checkID) => {
-    return getAnalysis(checkID)
-    .then((analysisData) => {
-      writeAnalysisData(checkID, analysisData)
+  if (checkIDs) {
+    return Promise.map(checkIDs, (checkID) => {
+      return getAnalysis(checkID)
+      .then((analysisData) => {
+        writeAnalysisData(checkID, analysisData)
+      })
     })
-  })
+  }
 }
 
 const writeAnalysisData = (checkID, analysisData) => {
-  const rows = []
-  let values, columnNames
+  if (analysisData) {
+    const rows = []
+    let values, columnNames
 
-  analysisData.analysis.forEach((analysisResult) => {
-    columnNames = Object.keys(analysisResult)
-    columnNames.unshift('CheckID')
-    values = Object.values(analysisResult)
-    values.unshift(checkID)
-    rows.push(values)
-  })
-  write(columnNames, rows, 'AnalysisResults')
+    analysisData.analysis.forEach((analysisResult) => {
+      columnNames = Object.keys(analysisResult)
+      columnNames.unshift('CheckID')
+      values = Object.values(analysisResult)
+      values.unshift(checkID)
+      rows.push(values)
+    })
+    write(columnNames, rows, 'AnalysisResults')
+  }
 }
 
 const authHeader = (credentials) => {
