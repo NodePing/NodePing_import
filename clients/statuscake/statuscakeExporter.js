@@ -10,14 +10,24 @@ const options = {
   json:true
 }
 
+const logError = (error, endpointName) => {
+  console.log(`Error when checking for ${endpointName}: ${err.error.message}`)
+}
+
 const getContactGroups = () => {
   options.uri = `${apiBaseUrl}/ContactGroups`
   return rp(options)
+  .catch((err) => {
+    logError(err, 'contactGroups')
+  })
 }
 
 const getSSLTests = () => {
   options.uri = `${apiBaseUrl}/SSL`
   return rp(options)
+  .catch((err) => {
+    logError(err, 'SSLTests')
+  })
 }
 
 const writeSSLTests = (data) => {
@@ -47,16 +57,39 @@ const writeContacts = (data) => {
 const getMaintenanceWindows = () => {
   options.uri = `${apiBaseUrl}/Maintenance`
   return rp(options)
+  .catch((err) => {
+    logError(err, 'MaintenanceWindows')
+  })
+}
+
+const writeMaintenanceWindows = (maintenaceWindowData) => {
+  if (maintenaceWindowData) {
+    const rows = []
+    let columnNames
+    let values
+    data.forEach((maintenaceWindowData) => {
+      columnNames = Object.keys(maintenaceWindowData)
+      values = Object.values(maintenaceWindowData)
+      rows.push(values)
+    })
+    write(columnNames, rows, 'maintenaceWindows')
+  }
 }
 
 const getPageSpeedTests = () => {
   options.uri = `${apiBaseUrl}/Pagespeed/`
   return rp(options)
+  .catch((err) => {
+    logError(err, 'PageSpeedTests')
+  })
 }
 
 const getPageSpeedHistory = (pageTestID) => {
   options.uri = `${apiBaseUrl}/Pagespeed/History?id=${pageTestID}`
   return rp(options)
+  .catch((err) => {
+    logError(err, 'PageSpeedHistory')
+  })
 }
 
 const writePageSpeedTests = (pageSpeedData) => {
@@ -76,7 +109,6 @@ const writePageSpeedData = (pageSpeedTest, pageSpeedHistory) => {
     'requests_min', 'requests_max', 'requests_avg',
     'filesize_kb_min', 'filesize_kb_max', 'filesize_kb_avg'
   ]
-  console.log(pageSpeedHistory)
 
   const history = pageSpeedHistory.data.aggregated
   const ID = pageSpeedTest.ID
@@ -111,16 +143,25 @@ const writePageSpeedData = (pageSpeedTest, pageSpeedHistory) => {
 const getPerformanceData = () => {
   options.uri = `${apiBaseUrl}/Tests/Checks`
   return rp(options)
+  .catch((err) => {
+    logError(err, 'PerformanceData')
+  })
 }
 
 const getPeriodData = () => {
   options.uri = `${apiBaseUrl}/Tests/Periods`
   return rp(options)
+  .catch((err) => {
+    logError(err, 'PeriodData')
+  })
 }
 
 const getAllTests = () => {
   options.uri = `${apiBaseUrl}/Tests`
   return rp(options)
+  .catch((err) => {
+    logError(err, 'Tests')
+  })
 }
 
 const writeTests = (data) => {
@@ -159,5 +200,7 @@ module.exports = {
       .then((SSLTestData) => writeSSLTests(SSLTestData))
     getPageSpeedTests()
       .then((pageSpeedTests) => writePageSpeedTests(pageSpeedTests))
+    getMaintenanceWindows()
+      .then((maintenanceWindows) => writeMaintenanceWindows(maintenanceWindows))
   }
 }
