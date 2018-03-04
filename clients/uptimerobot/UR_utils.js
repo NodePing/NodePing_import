@@ -1,4 +1,5 @@
 const _ = require('lodash')
+const urlParse = require('url-parse')
 
 module.exports = {
   mapMonitorsToChecks: function(monitors) {
@@ -20,12 +21,19 @@ module.exports = {
   mapContacts: function(contacts) {
     mappedContacts = []
     contacts.alert_contacts.forEach((contact) => {
+      if (contact.type === 2) {
+        contactType = 'email'
+        contactAddress = contact.value
+      } else if (contact.type === 5) {
+        contactType = 'webhook'
+        contactAddress = urlParse(contact.value).host
+      }
       mappedContact = {
         foreignID: parseInt(contact.id),
         custrole: 'owner',
         name: contact.friendly_name,
-        contactAddress: contact.value,
-        contactType: 'email',
+        contactAddress: contactAddress,
+        contactType: contactType,
         foreignContactGroups: []
       }
       mappedContacts.push(mappedContact)
