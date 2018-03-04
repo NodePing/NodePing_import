@@ -13,6 +13,11 @@ const getTests = () => {
   return rp(options)
 }
 
+const getSSL = () => {
+  options.uri = `${apiBaseUrl}SSL`
+  return rp(options)
+}
+
 const getContactGroups = (credentials) => {
   options.uri = `${apiBaseUrl}ContactGroups/`
   return rp(options)
@@ -24,20 +29,25 @@ const getContactGroups = (credentials) => {
 module.exports = {
   getDataMap: function(credentials) {
     options.headers = {
-          'API': credentials.token,
-          'Username': credentials.user
+      'API': credentials.token,
+      'Username': credentials.user
     }
     return getTests()
     .then((tests) => {
-      const checks = utils.mapTestsToChecks(tests)
-      return getContactGroups()
-      .then((contactMap) => {
-        dataMap = {
-          contactMap: contactMap,
-          checks: checks
-        }
-        return dataMap
+      return getSSL()
+      .then((SSLTests) => {
+        const checks = utils.mapTestsToChecks(tests, SSLTests)
+        return getContactGroups()
+        .then((contactMap) => {
+          dataMap = {
+            contactMap: contactMap,
+            checks: checks
+          }
+          return dataMap
+        })
       })
+
+
     })
   }
 }

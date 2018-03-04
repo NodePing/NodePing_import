@@ -2,7 +2,7 @@ const _ = require('lodash')
 
 module.exports = {
   //map statusCake check to NodePing test
-  mapTestsToChecks: function (tests) {
+  mapTestsToChecks: function (tests, SSLTests) {
     const checks = []
     tests.forEach((test) => {
       let check = {
@@ -13,6 +13,17 @@ module.exports = {
         public: test.Public,
         interval: test.CheckRate / 60,
         foreignContactIDs: [test.ContactGroup]
+      }
+      checks.push(check)
+    })
+    SSLTests.forEach((SSLTest) => {
+      let check = {
+        type: 'SSL',
+        label: SSLTest.domain,
+        target: SSLTest.domain,
+        enabled: !SSLTest.paused,
+        public: false,
+        foreignContactIDs: [SSLTest.contact_groups]
       }
       checks.push(check)
     })
@@ -64,7 +75,6 @@ module.exports = {
       })
       contacts.push(contact)
     })
-    console.log(contacts)
     return contacts
   }
 }
