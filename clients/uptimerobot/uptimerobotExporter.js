@@ -11,7 +11,7 @@ const options = {
 }
 
 const logError = (error, endpointName) => {
-  console.log(`Error when checking for ${endpointName}: ${err.error.message}`)
+  console.log(`Error when checking for ${endpointName}: ${error.statusCode}`)
 }
 
 const getMonitors = () => {
