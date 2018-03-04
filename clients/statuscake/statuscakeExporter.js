@@ -91,13 +91,12 @@ module.exports = {
         'Username': credentials.user
     }
     getContactGroups()
-    .then((data) => {
-      writeContacts(data)
-    })
+    .then((contactData) => writeContacts(contactData))
     getAllTests()
-    .then((data) => {
-      writeTests(data)
+    .then((testData) => writeTests(testData))
+    getPageSpeedTests()
+    .then((pageSpeedData) => {
+      console.log(pageSpeedData)
     })
-
   }
 }
