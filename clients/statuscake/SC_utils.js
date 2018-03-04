@@ -22,9 +22,32 @@ module.exports = {
   mapContactsAndGroups: function (contactGroups) {
     var contacts = []
     var emails = []
+    var webhooks = []
+
     contactGroups.forEach((contactGroup) => {
       emails = _.union(emails, contactGroup.Emails)
+      if (contactGroup.PingURL !== '') {
+        webhooks.push(contactGroup.PingURL)
+      }
     })
+
+    webhooks.forEach((webhook) => {
+      var contact = {
+        contactAddress: webhook,
+        contactType: 'webhook',
+        custrole: 'owner',
+        foreignContactGroups: {}
+      }
+      contactGroups.forEach((contactGroup) => {
+        groupID = contactGroup.ContactID
+        groupName = contactGroup.GroupName
+        if (contactGroup.PingURL === webhook) {
+          contact.foreignContactGroups[groupName] = {foreignID: groupID, npID: null}
+        }
+      })
+      contacts.push(contact)
+    })
+
     emails.forEach((email) => {
       var contact = {
         contactAddress: email,
@@ -32,8 +55,6 @@ module.exports = {
         custrole: 'owner',
         foreignContactGroups: {}
       }
-      contact.contactAddress = email
-      contact.contactType = 'email'
       contactGroups.forEach((contactGroup) => {
         groupID = contactGroup.ContactID
         groupName = contactGroup.GroupName
@@ -43,6 +64,7 @@ module.exports = {
       })
       contacts.push(contact)
     })
+    console.log(contacts)
     return contacts
   }
 }
