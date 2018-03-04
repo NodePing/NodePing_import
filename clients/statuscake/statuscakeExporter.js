@@ -15,6 +15,23 @@ const getContactGroups = () => {
   return rp(options)
 }
 
+const getSSLTests = () => {
+  options.uri = `${apiBaseUrl}/SSL`
+  return rp(options)
+}
+
+const writeSSLTests = (data) => {
+  const rows = []
+  let columnNames
+  let values
+  data.forEach((SSLTest) => {
+    columnNames = Object.keys(SSLTest)
+    values = Object.values(SSLTest)
+    rows.push(values)
+  })
+  write(columnNames, rows, 'SSLTests')
+}
+
 const writeContacts = (data) => {
   const rows = []
   let columnNames
@@ -49,11 +66,6 @@ const getPerformanceData = () => {
 
 const getPeriodData = () => {
   options.uri = `${apiBaseUrl}/Tests/Periods`
-  return rp(options)
-}
-
-const getSSLTests = () => {
-  options.uri = `${apiBaseUrl}/SSL`
   return rp(options)
 }
 
@@ -94,9 +106,7 @@ module.exports = {
     .then((contactData) => writeContacts(contactData))
     getAllTests()
     .then((testData) => writeTests(testData))
-    getPageSpeedTests()
-    .then((pageSpeedData) => {
-      console.log(pageSpeedData)
-    })
+    getSSLTests()
+    .then((SSLTestData) => writeSSLTests(SSLTestData))
   }
 }
