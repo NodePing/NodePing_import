@@ -10,86 +10,116 @@ const options = {
   json: true
 }
 
+const logError = (error, endpointName) => {
+  console.log(`Error when checking for ${endpointName}: ${err.error.message}`)
+}
+
 const getMonitors = () => {
   options.uri = `${apiBaseUrl}/getMonitors`
   return rp(options)
+  .catch((err) => {
+    logError(err, 'Monitors')
+  })
 }
 
 const writeMonitors = (data) => {
-  const rows = []
-  let columnNames
-  let values
-  data.monitors.forEach((monitor) => {
-    columnNames = Object.keys(monitor)
-    values = Object.values(monitor)
-    rows.push(values)
-  })
-  write(columnNames, rows, 'monitors')
+  if (data) {
+    const rows = []
+    let columnNames
+    let values
+    data.monitors.forEach((monitor) => {
+      columnNames = Object.keys(monitor)
+      values = Object.values(monitor)
+      rows.push(values)
+    })
+    write(columnNames, rows, 'monitors')
+  }
 }
 
 const getMWindows = () => {
   options.uri = `${apiBaseUrl}/getMWindows`
   return rp(options)
+  .catch((err) => {
+    logError(err, 'MaintenanceWindows')
+  })
 }
 
 const writeMWindows = (data) => {
-  const rows = []
-  let columnNames
-  let values
-  data.mwindows.forEach((mwindow) => {
-    columnNames = Object.keys(mwindow)
-    values = Object.values(mwindow)
-    rows.push(values)
-  })
-  write(columnNames, rows, 'mwindows')
+  if (data) {
+    const rows = []
+    let columnNames
+    let values
+    data.mwindows.forEach((mwindow) => {
+      columnNames = Object.keys(mwindow)
+      values = Object.values(mwindow)
+      rows.push(values)
+    })
+    write(columnNames, rows, 'mwindows')
+  }
 }
 
 const getPSPs = () => {
   options.uri = `${apiBaseUrl}/getPSPs`
   return rp(options)
+  .catch((err) => {
+    logError(err, 'PSPs')
+  })
 }
 
 const writePSPs = (pspData) => {
-  const rows = []
-  let columnNames
-  let values
-  pspData.psps.forEach((psp) => {
-    columnNames = Object.keys(psp)
-    values = Object.values(psp)
-    rows.push(values)
-  })
-  write(columnNames, rows, 'psps')}
+  if (pspData) {
+    const rows = []
+    let columnNames
+    let values
+    pspData.psps.forEach((psp) => {
+      columnNames = Object.keys(psp)
+      values = Object.values(psp)
+      rows.push(values)
+    })
+    write(columnNames, rows, 'psps')
+  }
+}
 
 const getAlertContacts = () => {
   options.uri = `${apiBaseUrl}/getAlertContacts`
   return rp(options)
+  .catch((err) => {
+    logError(err, 'AlertContacts')
+  })
 }
 
 const writeContacts = (data) => {
-  const rows = []
-  let columnNames
-  let values
-  data.alert_contacts.forEach((contact) => {
-    columnNames = Object.keys(contact)
-    values = Object.values(contact)
-    rows.push(values)
-  })
-  write(columnNames, rows, 'contacts')
+  if (data) {
+    const rows = []
+    let columnNames
+    let values
+    data.alert_contacts.forEach((contact) => {
+      columnNames = Object.keys(contact)
+      values = Object.values(contact)
+      rows.push(values)
+    })
+    write(columnNames, rows, 'contacts')
+  }
 }
 
 const getAccountDetails = () => {
   options.uri = `${apiBaseUrl}/getAccountDetails`
   return rp(options)
+  .catch((err) => {
+    logError(err, 'AccountDetails')
+  })
 }
 
 const writeAccountDetails = (data) => {
-  const rows = []
-  const account = data.account
-  const columnNames = Object.keys(account)
-  const values = Object.values(account)
-  rows.push(values)
+  if (data) {
+    const rows = []
+    const account = data.account
+    const columnNames = Object.keys(account)
+    const values = Object.values(account)
+    rows.push(values)
 
-  write(columnNames, rows, 'accountDetails')
+    write(columnNames, rows, 'accountDetails')
+  }
 }
 
 const write = (columnNames, rows, entityName) => {
