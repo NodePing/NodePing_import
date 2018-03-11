@@ -12,7 +12,13 @@ let options = {
 }
 
 const logError = (error, endpointName) => {
-  console.log(`Error when invoking ${endpointName}: ${error.error.message}`)
+  if (error.statusCode === 403) {
+    console.log('Invalid credentials.  Please verify contents of credentials.js')
+    process.exit()
+  } else {
+    console.log(error.message)
+    process.exit()
+  }
   process.exit()
 }
 
