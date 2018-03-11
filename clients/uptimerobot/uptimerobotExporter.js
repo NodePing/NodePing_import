@@ -12,6 +12,7 @@ const options = {
 
 const logError = (error, endpointName) => {
   console.log(`Error when checking for ${endpointName}: ${error.statusCode}`)
+  process.exit()
 }
 
 const getMonitors = () => {
