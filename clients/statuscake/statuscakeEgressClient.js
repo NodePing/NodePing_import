@@ -9,7 +9,14 @@ const options = {
 }
 
 const logError = (error, endpointName) => {
-  console.log(`Error when invoking ${endpointName}: ${error.error.message}`)
+  console.log(Object.keys(error.error))
+  if (error.error.ErrNo === 0) {
+    console.log('Invalid StatusCake credentials, please verify credentials.js')
+    process.exit()
+  } else {
+    console.log(`Error when invoking ${endpointName}: ${error.error.Error}`)
+    process.exit()
+  }
 }
 
 const getTests = () => {

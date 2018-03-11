@@ -10,7 +10,13 @@ const options = {
 }
 
 const logError = (error, endpointName) => {
-  console.log(`Error when invoking ${endpointName}: ${error.error.message}`)
+  if (error.error.error.statuscode === 401) {
+    console.log('Invalid Pingdom credentials, please verify credentials.js')
+    process.exit()
+  } else {
+    console.log(`Error when invoking ${endpointName}: ${error.error.error.errormessage}`)
+    process.exit()
+  }
 }
 
 const authHeader = (credentials) => {
@@ -32,13 +38,13 @@ const getCheck = (checkID) => {
 const getChecks = () => {
   options.uri = `${apiBaseUrl}/checks`
   return rp(options)
-  .catch((err) => {
-    logError(err, 'checks')
-  })
   .then((response) => {
     return Promise.map(response.checks, (check) => {
       return getCheck(check.id)
     })
+  })
+  .catch((err) => {
+    logError(err, 'checks')
   })
 }
 

@@ -14,6 +14,7 @@ const options = {
 
 const logError = (error, endpointName) => {
   console.log(`Error when invoking ${endpointName}: ${error.error.message}`)
+  process.exit()
 }
 
 
@@ -40,13 +41,13 @@ const syncContactsAndGroups = (dataMap, credentials) => {
           }
       })
       .then((mappedContacts) => {
-        return utils.mapContactsToGroups(mappedContacts)
-        .then((createdGroups) => {
-          return {
-            createdGroups,
-            mappedContacts
-          }
-        })
+          return utils.mapContactsToGroups(mappedContacts)
+          .then((createdGroups) => {
+            return {
+              createdGroups,
+              mappedContacts
+            }
+          })
       })
     })
   })

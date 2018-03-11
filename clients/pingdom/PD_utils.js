@@ -26,40 +26,49 @@ const getCustrole = (access_level) => {
 module.exports = {
   mapPDChecksToNPChecks: function(checks) {
     const NPChecks = []
+    if (checks) {
+      checks.forEach((PDCheck) => {
+        type = Object.keys(PDCheck.check.type)[0]
+        let check = {
+          type: type,
+          label: PDCheck.check.name,
+          target: PDCheck.check.hostname,
+          enabled: "active",
+          public: true,
+          interval: PDCheck.check.resolution * 60,
+          foreignContactIDs: [PDCheck.check.userids  || []]
+        }
 
-    checks.forEach((PDCheck) => {
-      type = Object.keys(PDCheck.check.type)[0]
-      let check = {
-        type: type,
-        label: PDCheck.check.name,
-        target: PDCheck.check.hostname,
-        enabled: "active",
-        public: true,
-        interval: PDCheck.check.resolution * 60,
-        foreignContactIDs: [PDCheck.check.userids  || []]
-      }
-
-      NPChecks.push(check)
-    })
-    return NPChecks
+        NPChecks.push(check)
+      })
+      return NPChecks
+    }
   },
   mapUsersAndTeams: function(usersAndTeams) {
-    contacts = []
-    let teams = usersAndTeams.userTeams.teams
-    let users = usersAndTeams.users.users
-    users.forEach((user) => {
-      let userTeams = getUserTeams(user.id, teams)
+    if (usersAndTeams) {
+      contacts = []
+      if (usersAndTeams.userTeams && usersAndTeams.users) {
+        let teams = usersAndTeams.userTeams.teams
+        let users = usersAndTeams.users.users
 
-      contact = {
-        foreignID: user.id,
-        custrole: getCustrole(user.access_level),
-        name: user.name,
-        contactAddress: user.email[0].address,
-        contactType: 'email',
-        foreignContactGroups: userTeams
+        users.forEach((user) => {
+          let userTeams = getUserTeams(user.id, teams)
+
+          contact = {
+            foreignID: user.id,
+            custrole: getCustrole(user.access_level),
+            name: user.name,
+            contactAddress: user.email[0].address,
+            contactType: 'email',
+            foreignContactGroups: userTeams
+          }
+          contacts.push(contact)
+        })
+        return contacts
+      } else {
+        return []
       }
-      contacts.push(contact)
-    })
-    return contacts
+
+    }
   }
 }

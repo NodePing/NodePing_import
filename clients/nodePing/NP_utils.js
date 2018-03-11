@@ -13,6 +13,7 @@ let options = {
 
 const logError = (error, endpointName) => {
   console.log(`Error when invoking ${endpointName}: ${error.error.message}`)
+  process.exit()
 }
 
 const createContactGroup = (groupInfo) => {
@@ -48,32 +49,34 @@ module.exports = {
     })
   },
   mapContactsToGroups: function(contactMap) {
-    const groupMap = {}
-    contactMap.forEach((contact) => {
-      mappedGroups = Object.keys(groupMap)
-      contactGroups = contact.foreignContactGroups
+    if (contactMap.length > 0) {
+      const groupMap = {}
+      contactMap.forEach((contact) => {
+        mappedGroups = Object.keys(groupMap)
+        contactGroups = contact.foreignContactGroups
 
-      addresses = Object.keys(contact.NpContact.addresses)
-      for (groupName in contactGroups) {
-        if (mappedGroups.indexOf(groupName) === -1) {
-          groupMap[groupName] = {
-            foreignID: contactGroups[groupName].foreignID,
-            addresses: addresses,
-            npID: null
+        addresses = Object.keys(contact.NpContact.addresses)
+        for (groupName in contactGroups) {
+          if (mappedGroups.indexOf(groupName) === -1) {
+            groupMap[groupName] = {
+              foreignID: contactGroups[groupName].foreignID,
+              addresses: addresses,
+              npID: null
+            }
+          } else {
+            groupMap[groupName].addresses = _.union(groupMap[groupName].addresses, addresses)
           }
-        } else {
-          groupMap[groupName].addresses = _.union(groupMap[groupName].addresses, addresses)
         }
-      }
-    })
-    return Promise.map(mappedGroups, (groupName) => {
-      let groupMembers = groupMap[groupName].addresses
-      return createContactGroup({name: groupName, members: groupMembers})
-      .then((response) => {
-        groupMap[groupName].npID = response._id
-        return groupMap[groupName]
       })
-    })
+      return Promise.map(mappedGroups, (groupName) => {
+        let groupMembers = groupMap[groupName].addresses
+        return createContactGroup({name: groupName, members: groupMembers})
+        .then((response) => {
+          groupMap[groupName].npID = response._id
+          return groupMap[groupName]
+        })
+      })
+    }
   },
   createContact: function(contactInfo) {
     let payload = {

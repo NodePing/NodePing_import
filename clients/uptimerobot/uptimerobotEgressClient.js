@@ -5,6 +5,11 @@ const utils = require('./UR_utils.js')
 const apiBaseUrl = 'https://api.uptimerobot.com/v2'
 
 
+const logError = (error, endpointName) => {
+  console.log(`${error.type} : ${error.message}`)
+  process.exit()
+}
+
 const getMonitors = (credentials) => {
   let options = {
     uri: `${apiBaseUrl}/getMonitors`,
@@ -36,6 +41,9 @@ module.exports = {
   getDataMap: function(credentials) {
     return getMonitors(credentials)
     .then((monitorResults) => {
+      if (monitorResults.stat === 'fail') {
+        logError(monitorResults.error)
+      }
       const checks = utils.mapMonitorsToChecks(monitorResults.monitors)
       return getAlertContacts(credentials)
       .then((contactMap) => {
