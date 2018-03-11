@@ -1,6 +1,3 @@
-const _ = require('lodash')
-
-
 const getUserTeams = (userID, teams) => {
     userTeams = {}
     teams.forEach((team) => {

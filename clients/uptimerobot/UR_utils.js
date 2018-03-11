@@ -1,4 +1,3 @@
-const _ = require('lodash')
 const urlParse = require('url-parse')
 
 module.exports = {

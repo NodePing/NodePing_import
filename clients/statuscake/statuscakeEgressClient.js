@@ -8,14 +8,24 @@ const options = {
   json: true
 }
 
+const logError = (error, endpointName) => {
+  console.log(`Error when invoking ${endpointName}: ${error.error.message}`)
+}
+
 const getTests = () => {
   options.uri = `${apiBaseUrl}Tests/`
   return rp(options)
+  .catch((err) => {
+    logError(err, 'Tests')
+  })
 }
 
 const getSSL = () => {
   options.uri = `${apiBaseUrl}SSL`
   return rp(options)
+  .catch((err) => {
+    logError(err, 'SSL')
+  })
 }
 
 const getContactGroups = (credentials) => {
@@ -23,6 +33,9 @@ const getContactGroups = (credentials) => {
   return rp(options)
   .then((results) => {
     return utils.mapContactsAndGroups(results)
+  })
+  .catch((err) => {
+    logError(err, 'ContactGroups')
   })
 }
 
@@ -46,8 +59,6 @@ module.exports = {
           return dataMap
         })
       })
-
-
     })
   }
 }

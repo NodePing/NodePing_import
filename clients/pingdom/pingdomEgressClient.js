@@ -9,6 +9,10 @@ const options = {
   json: true
 }
 
+const logError = (error, endpointName) => {
+  console.log(`Error when invoking ${endpointName}: ${error.error.message}`)
+}
+
 const authHeader = (credentials) => {
   let auth = "Basic " + new Buffer(credentials.user + ":" + credentials.pwd).toString("base64");
   return {
@@ -20,26 +24,38 @@ const authHeader = (credentials) => {
 const getCheck = (checkID) => {
   options.uri = `${apiBaseUrl}/checks/${checkID}`
   return rp(options)
+  .catch((err) => {
+    logError(err, `checks/${checkID}`)
+  })
 }
 
 const getChecks = () => {
   options.uri = `${apiBaseUrl}/checks`
   return rp(options)
-    .then((response) => {
-      return Promise.map(response.checks, (check) => {
-        return getCheck(check.id)
-      })
+  .catch((err) => {
+    logError(err, 'checks')
+  })
+  .then((response) => {
+    return Promise.map(response.checks, (check) => {
+      return getCheck(check.id)
     })
+  })
 }
 
 const getUserTeams = () => {
   options.uri = `${apiBaseUrl}/teams`
   return rp(options)
+  .catch((err) => {
+    logError(err, 'teams')
+  })
 }
 
 const getUsers = () => {
   options.uri = `${apiBaseUrl}/users`
   return rp(options)
+  .catch((err) => {
+    logError(err, 'users')
+  })
 }
 
 const getUsersAndTeams = () => {

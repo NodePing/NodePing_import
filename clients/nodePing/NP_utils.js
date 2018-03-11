@@ -11,17 +11,27 @@ let options = {
   json: true
 }
 
+const logError = (error, endpointName) => {
+  console.log(`Error when invoking ${endpointName}: ${error.error.message}`)
+}
+
 const createContactGroup = (groupInfo) => {
   console.log(`creating new ContactGroup: ${groupInfo.name}`)
   options.uri = `${apiBaseUrl}contactgroups/?token=${npCredentials.token}`
   options.method = 'POST'
   options.body = groupInfo
   return rp(options)
+  .catch((err) => {
+    logError(err, 'createContactGroup')
+  })
 }
 
 module.exports = {
   getNpContacts: function() {
     return rp(options)
+    .catch((err) => {
+      logError(err, 'getNpContacts')
+    })
   },
   //map foreign contacts to existing NP contacts, match on email
   mapContacts: function(NpContacts, foreignContacts) {
@@ -80,5 +90,8 @@ module.exports = {
     options.method = 'POST'
     options.body = payload
     return rp(options)
+    .catch((err) => {
+      logError(err, 'createContact')
+    })
   }
 }

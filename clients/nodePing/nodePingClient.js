@@ -1,14 +1,21 @@
 const rp = require('request-promise')
 const Promise = require('bluebird')
-const normalizeUrl = require('normalize-url');
+const normalizeUrl = require('normalize-url')
 const utils = require('./NP_utils.js')
 const _ = require('lodash')
+
 const apiBaseUrl = 'https://api.nodeping.com/api/1/'
 
 const options = {
   method: 'POST',
   json: true
 }
+
+
+const logError = (error, endpointName) => {
+  console.log(`Error when invoking ${endpointName}: ${error.error.message}`)
+}
+
 
 const syncContactsAndGroups = (dataMap, credentials) => {
   let foreignContacts = dataMap.contactMap
@@ -25,8 +32,10 @@ const syncContactsAndGroups = (dataMap, credentials) => {
           } else {
             return utils.createContact(mappedContact)
             .then((createdContact) => {
-              mappedContact.NpContact = _.cloneDeep(createdContact)
-              return mappedContact
+              if (createdContact) {
+                mappedContact.NpContact = _.cloneDeep(createdContact)
+                return mappedContact
+              }
             })
           }
       })
@@ -83,6 +92,9 @@ const syncChecks = (checks, contactsAndGroups, credentials) => {
 
     console.log(`Creating new check: ${newCheck.label}`)
     return rp(options)
+    .catch((err) => {
+      logError(err, 'syncChecks')
+    })
   })
 }
 
