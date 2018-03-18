@@ -1,9 +1,25 @@
 # NodePing_node
 Node.js library for interacting with NodePing API
 
+**Requirements:**
 
-First, create `credentials.js` in top-level directory (`NodePing_node`)  This will contain
+Node.js (Tested with v9.5.0)
+
+npm (Tested with v5.6.0)
+
+**Steps to Migrate**
+
+* Download/clone, execute `npm install` in top level directory
+
+* Create `credentials.js` in top-level directory (`NodePing_node`)  This will contain
 your token, username, and/or password for the service you are migrating from.  
+
+
+* Then execute `node sync-client.js -s <source platform>` to sync data from the source to NodePing
+ie, `node sync-client.js -s statuscake`
+
+* It is recommended to additionally export all data from the source platform by using the `--export` flag as follows:
+`node sync-client.js -s <source platform> --export`
 
 `credentials.js` should contain entries for NodePing and the target foreign platform:
 
@@ -31,17 +47,10 @@ module.exports = {
 You only need entries for NodePing and the foreign platform you're pulling data from.  If you're pulling from
 pingdom, you can leave out the entries for StatusCake and UptimeRobot, for instance.
 
-Then execute
-`node sync-client.js -s <source platform>` to sync data from the source to NodePing
-
-ie, `node sync-client.js -s statuscake`
-
-It is recommended to additionally export all data from the source platform by using the `--export` flag as follows:
-
-`node sync-client.js -s <source platform> --export`
 
 
-##Caveats / Known Limitations:
+
+## Caveats / Known Limitations:
 
 * If a contact or contact group already exists in NodePing (ie, if an identical email/webhook address exists), it will not be created (not a limitation, just something to be aware of)
 
