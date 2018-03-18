@@ -3,9 +3,9 @@ Node.js library for interacting with NodePing API
 
 **Requirements:**
 
-Node.js (Tested with v9.5.0)
+* Node.js (Tested with v9.5.0)
 
-npm (Tested with v5.6.0)
+* npm (Tested with v5.6.0)
 
 **Steps to Migrate**
 
