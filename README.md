@@ -43,8 +43,13 @@ It is recommended to additionally export all data from the source platform by us
 
 ##Caveats / Known Limitations:
 
-Some platforms have some entities that do not correspond to entities in NodePing, so those entities will
+* If a contact or contact group already exists in NodePing (ie, if an identical email/webhook address exists), it will not be created (not a limitation, just something to be aware of)
+
+* Some platforms have some entities that do not correspond to entities in NodePing, so those entities will
 not be created in NodePing.  For this reason, it is *strongly* recommended that you run the `--export` option
 as described above.  In this way, you will keep a record of all of your data.
 
-Some Premium tier features are not supported and/or have not been tested.
+* If you run the sync client more than once, you will create duplicate checks in NodePing.
+
+
+* Some Premium tier features are not supported and/or have not been tested.
