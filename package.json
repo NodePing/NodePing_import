@@ -1,6 +1,6 @@
 {
-  "name": "nodeping_node",
-  "version": "1.0.0",
+  "name": "nodeping_import",
+  "version": "1.0.1",
   "description": "Sync client for NodePing data ingress",
   "main": "sync-client.js",
   "scripts": {
@@ -8,14 +8,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/NodePing/NodePing_node.git"
+    "url": "git+https://github.com/NodePing/NodePing_import.git"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/NodePing/NodePing_node/issues"
+    "url": "https://github.com/NodePing/NodePing_import/issues"
   },
-  "homepage": "https://github.com/NodePing/NodePing_node#readme",
+  "homepage": "https://github.com/NodePing/NodePing_import#readme",
   "dependencies": {
     "bluebird": "^3.5.1",
     "csv-write-stream": "^2.0.0",
