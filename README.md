@@ -1,5 +1,5 @@
 # NodePing_node
-Node.js library for interacting with NodePing API
+Node.js library for importing uptime monitoring checks and settings from other providers into NodePing
 
 **Requirements:**
 
