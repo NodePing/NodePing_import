@@ -1,4 +1,4 @@
-# NodePing_node
+# NodePing_import
 Node.js library for importing uptime monitoring checks and settings from other providers into NodePing
 
 **Requirements:**
@@ -11,7 +11,7 @@ Node.js library for importing uptime monitoring checks and settings from other p
 
 * Download/clone, execute `npm install` in top level directory
 
-* Create `credentials.js` in top-level directory (`NodePing_node`)  This will contain
+* Create `credentials.js` in top-level directory (`NodePing_import`)  This will contain
 your token, username, and/or password for the service you are migrating from.  
 
 
